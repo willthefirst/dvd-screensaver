@@ -4,10 +4,11 @@ var source = require("vinyl-source-stream");
 var watchify = require("watchify");
 var tsify = require("tsify");
 var fancy_log = require("fancy-log");
+var browserSync = require("browser-sync");
 
 var paths = {
-    pages: ["src/*.html"],
-    assets: ["src/assets/**/*.*"]
+	pages: ["src/*.html"],
+	assets: ["src/assets/**/*.*"]
 };
 
 var watchedBrowserify = watchify(
@@ -23,6 +24,7 @@ var watchedBrowserify = watchify(
 gulp.task("copy-html", function () {
 	return gulp.src(paths.pages).pipe(gulp.dest("dist"));
 });
+
 gulp.task("copy-assets", function () {
 	return gulp.src(paths.assets).pipe(gulp.dest("dist"));
 });
@@ -35,6 +37,25 @@ function bundle() {
 		.pipe(gulp.dest("dist"));
 }
 
-gulp.task("default", gulp.series(gulp.parallel(["copy-html", "copy-assets"]), bundle));
+const server = browserSync.create();
+
+function reload(done) {
+	server.reload();
+	done();
+}
+
+function serve(done) {
+	server.init({
+		server: {
+			baseDir: "./dist/"
+		},
+		browser: "google chrome"
+	});
+	done();
+}
+
+const watch = () => gulp.watch("./dist", reload);
+
+gulp.task("default", gulp.series(gulp.parallel(["copy-html", "copy-assets"]), bundle, serve, watch));
 watchedBrowserify.on("update", bundle);
 watchedBrowserify.on("log", fancy_log);
