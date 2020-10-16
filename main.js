@@ -4,15 +4,15 @@ const ctx = canvas.getContext("2d");
 let logo = new Image();
 
 // Globals
-let width = 1200;
-let height = 900;
+let width = 900;
+let height = 600;
 let logoX = 1;
 let logoY = 1;
 let logoWidth = 250;
 let logoHeight = 150;
 let logoVector = {
-	changeX: 10,
-	changeY: 10
+	changeX: 3,
+	changeY: 3
 };
 
 const init = () => {
