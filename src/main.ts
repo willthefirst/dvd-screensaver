@@ -1,4 +1,4 @@
-const canvas = document.getElementById("dvd");
+const canvas = <HTMLCanvasElement> document.getElementById("dvd");
 const ctx = canvas.getContext("2d");
 
 let logo = new Image();
@@ -17,7 +17,7 @@ let logoVector = {
 
 const init = () => {
 	// Initialize logo
-	logo.src = "dvd-logo.svg";
+	logo.src = "images/dvd-logo.svg";
 	window.requestAnimationFrame(draw);
 };
 
