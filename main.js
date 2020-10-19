@@ -4,46 +4,46 @@ const ctx = canvas.getContext("2d");
 let logo = new Image();
 
 // Globals
-let width = 900;
-let height = 600;
+let bgWidth = 900;
+let bgHeight = 600;
 let logoX = 1;
 let logoY = 1;
-let logoWidth = 50;
-let logoHeight = 30;
+let logoWidth = 110;
+let logoHeight = 75;
 let logoVector = {
-	changeX: 3,
-	changeY: 3
+	changeX: 10,
+	changeY: 10
 };
 let logoColorOptions = ["#FF228A", "#002FF4", "#FFEC0A"];
 let logoCurrentColor = 0;
 
 const init = () => {
-	// Initialize logo
-	logo.src = "images/dvd-logo.svg";
+	logo.src = "dvd-logo.svg";
+	setCanvasSize();
+
 	window.requestAnimationFrame(draw);
+	window.addEventListener('resize', setCanvasSize);
 };
 
 const setCanvasSize = () => {
+	console.log("Resize");
 	const w = window.innerWidth;
 	const h = window.innerHeight;
 
-	canvas.style.width = `${w}px`;
-	canvas.style.height = `${h}px`;
-
-	width = window.innerWidth;
-	height = window.innerHeight;
+	canvas.setAttribute('width',`${w}px`);
+	canvas.setAttribute('height',`${h}px`);
+	bgWidth = w;
+	bgHeight = h;
 };
 
 const draw = () => {
 	// Clear the canvas
-	ctx.clearRect(0, 0, width, height);
-
-	setCanvasSize();
+	ctx.clearRect(0, 0, bgWidth, bgHeight);
 
 	// Draw black background
 	ctx.fillStyle = "#000";
 	ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
-	ctx.fillRect(0, 0, width, height);
+	ctx.fillRect(0, 0, bgWidth, bgHeight);
 	ctx.save();
 
 	updateLogo();
@@ -56,8 +56,8 @@ const draw = () => {
 // Update the logo position and color
 const updateLogo = () => {
 	// Bounce off edges
-	const atTopOrBot = logoY <= 0 || logoY + logoHeight >= height;
-	const atLeftOrRight = logoX <= 0 || logoX + logoWidth >= width;
+	const atTopOrBot = logoY <= 0 || logoY + logoHeight >= bgHeight;
+	const atLeftOrRight = logoX <= 0 || logoX + logoWidth >= bgWidth;
 
 	// Update logo's direction if necessary
 	if (atTopOrBot) {
