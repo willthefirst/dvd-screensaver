@@ -26,6 +26,9 @@ const init = () => {
 };
 
 const setCanvasSize = () => {
+	// This prevent the "offscreen" bug;
+	logoX = 1;
+	logoY = 1;
 
 	const w = window.innerWidth;
 	const h = window.innerHeight;
