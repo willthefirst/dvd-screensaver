@@ -1,4 +1,4 @@
-const canvas = <HTMLCanvasElement> document.getElementById("dvd");
+const canvas = document.getElementById("dvd");
 const ctx = canvas.getContext("2d");
 
 let logo = new Image();
@@ -8,12 +8,14 @@ let width = 900;
 let height = 600;
 let logoX = 1;
 let logoY = 1;
-let logoWidth = 250;
-let logoHeight = 150;
+let logoWidth = 50;
+let logoHeight = 30;
 let logoVector = {
 	changeX: 3,
 	changeY: 3
 };
+let logoColorOptions = ["#FF228A", "#002FF4", "#FFEC0A"];
+let logoCurrentColor = 0;
 
 const init = () => {
 	// Initialize logo
@@ -21,9 +23,22 @@ const init = () => {
 	window.requestAnimationFrame(draw);
 };
 
+const setCanvasSize = () => {
+	const w = window.innerWidth;
+	const h = window.innerHeight;
+
+	canvas.style.width = `${w}px`;
+	canvas.style.height = `${h}px`;
+
+	width = window.innerWidth;
+	height = window.innerHeight;
+};
+
 const draw = () => {
 	// Clear the canvas
 	ctx.clearRect(0, 0, width, height);
+
+	setCanvasSize();
 
 	// Draw black background
 	ctx.fillStyle = "#000";
@@ -31,7 +46,6 @@ const draw = () => {
 	ctx.fillRect(0, 0, width, height);
 	ctx.save();
 
-	// Update the logo position
 	updateLogo();
 
 	// Draw the logo
@@ -39,6 +53,7 @@ const draw = () => {
 	window.requestAnimationFrame(draw);
 };
 
+// Update the logo position and color
 const updateLogo = () => {
 	// Bounce off edges
 	const atTopOrBot = logoY <= 0 || logoY + logoHeight >= height;
