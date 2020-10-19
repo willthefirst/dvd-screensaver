@@ -22,16 +22,16 @@ const init = () => {
 	setCanvasSize();
 
 	window.requestAnimationFrame(draw);
-	window.addEventListener('resize', setCanvasSize);
+	window.addEventListener("resize", setCanvasSize);
 };
 
 const setCanvasSize = () => {
-	console.log("Resize");
+
 	const w = window.innerWidth;
 	const h = window.innerHeight;
 
-	canvas.setAttribute('width',`${w}px`);
-	canvas.setAttribute('height',`${h}px`);
+	canvas.setAttribute("width", `${w}px`);
+	canvas.setAttribute("height", `${h}px`);
 	bgWidth = w;
 	bgHeight = h;
 };
@@ -75,6 +75,8 @@ const updateLogo = () => {
 	logoY += logoVector.changeY;
 };
 
-const changeColor = () => {};
+const changeColor = () => {
+
+};
 
 init();
