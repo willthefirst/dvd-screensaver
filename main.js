@@ -11,8 +11,8 @@ let logoY = 1;
 let logoWidth = 110;
 let logoHeight = 75;
 let logoVector = {
-	changeX: 10,
-	changeY: 10
+	changeX: 4,
+	changeY: 4
 };
 let logoColorOptions = ["#FF228A", "#002FF4", "#FFEC0A"];
 let logoCurrentColor = 0;
@@ -76,10 +76,6 @@ const updateLogo = () => {
 	// Move logo along its vector
 	logoX += logoVector.changeX;
 	logoY += logoVector.changeY;
-};
-
-const changeColor = () => {
-
 };
 
 init();
