@@ -14,12 +14,17 @@ let logoVector = {
 	changeX: 4,
 	changeY: 4
 };
-let logoColorOptions = ["#FF228A", "#002FF4", "#FFEC0A"];
-let logoCurrentColor = 0;
+const logoImages = [
+	"images/dvd-logo-white.svg",
+	"images/dvd-logo-2.svg",
+	"images/dvd-logo-3.svg",
+	"images/dvd-logo-4.svg"
+];
+let logoImageIndex = 0;
 
 const init = () => {
-	logo.src = "dvd-logo.svg";
 	setCanvasSize();
+	changeColor();
 
 	window.requestAnimationFrame(draw);
 	window.addEventListener("resize", setCanvasSize);
@@ -76,6 +81,16 @@ const updateLogo = () => {
 	// Move logo along its vector
 	logoX += logoVector.changeX;
 	logoY += logoVector.changeY;
+};
+
+const changeColor = () => {
+	if (logoImageIndex === logoImages.length - 1) {
+		logoImageIndex = 0;
+	} else {
+		logoImageIndex++;
+	}
+
+	logo.src = logoImages[logoImageIndex];
 };
 
 init();
