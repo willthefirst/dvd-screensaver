@@ -1,26 +1,40 @@
 const canvas = document.getElementById("dvd");
 const ctx = canvas.getContext("2d");
 
+class Logo {
+	constructor() {
+		this.x = 1;
+		this.y = 1;
+		this.width = 110;
+		this.height = 75;
+		this.vector = {
+			moveX = 4,
+			moveY = 4
+		}
+		this.imagePaths = [
+			"images/dvd-logo-white.svg",
+			"images/dvd-logo-2.svg",
+			"images/dvd-logo-3.svg",
+			"images/dvd-logo-4.svg"
+		]
+		this.imagePathIndex = 0
+	}
+}
+
 let logo = new Image();
 
 // Globals
-let bgWidth = 900;
-let bgHeight = 600;
-let logoX = 1;
-let logoY = 1;
-let logoWidth = 110;
-let logoHeight = 75;
-let logoVector = {
-	changeX: 4,
-	changeY: 4
-};
-const logoImages = [
-	"images/dvd-logo-white.svg",
-	"images/dvd-logo-2.svg",
-	"images/dvd-logo-3.svg",
-	"images/dvd-logo-4.svg"
-];
-let logoImageIndex = 0;
+// let bgWidth = 900;
+// let bgHeight = 600;
+// let logoX = 1;
+// let logoY = 1;
+// let logoWidth = 110;
+// let logoHeight = 75;
+// let logoVector = {
+// 	changeX: 4,
+// 	changeY: 4
+// };
+// let logoImageIndex = 0;
 
 const init = () => {
 	setCanvasSize();
@@ -69,11 +83,13 @@ const updateLogo = () => {
 
 	// Update logo's direction if necessary
 	if (atTopOrBot) {
+		addLogo();
 		logoVector.changeY *= -1;
 		changeColor();
 	}
 
 	if (atLeftOrRight) {
+		addLogo();
 		logoVector.changeX *= -1;
 		changeColor();
 	}
@@ -92,5 +108,9 @@ const changeColor = () => {
 
 	logo.src = logoImages[logoImageIndex];
 };
+
+const addLogo = () => {
+	console.log("added logo")
+}
 
 init();
