@@ -1,5 +1,52 @@
-const canvas = document.getElementById("dvd");
-const ctx = canvas.getContext("2d");
+class World {
+	constructor(canvasEl) {
+		this.canvas = canvasEl;
+		this.ctx = this.canvas.getContext("2d");
+		this.logos = [];
+		this.height = 600;
+		this.width = 900;
+	}
+
+	draw = function () {
+		// Clear the canvas
+		this.ctx.clearRect(0, 0, this.width, this.height);
+
+		// Draw black background
+		this.ctx.fillStyle = "#000";
+		this.ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
+		this.ctx.fillRect(0, 0, this.width, this.height);
+		this.ctx.save();
+
+		// Draw the logos
+		this.logos.forEach((logo) => {
+			logo.update(this.width, this.height);
+			this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
+		});
+
+		window.requestAnimationFrame(this.draw);
+	}.bind(this);
+
+	setSize = function () {
+		// This prevent the "offscreen" bug;
+		this.logos.forEach((logo) => {
+			logo.x = 1;
+			logo.y = 1;
+		});
+
+		const w = window.innerWidth;
+		const h = window.innerHeight;
+
+		this.canvas.setAttribute("width", `${w}px`);
+		this.canvas.setAttribute("height", `${h}px`);
+
+		this.width = w;
+		this.height = h;
+	}.bind(this);
+
+	addLogo = function () {
+		this.logos.push(new Logo());
+	}.bind(this);
+}
 
 class Logo {
 	constructor() {
@@ -36,20 +83,18 @@ class Logo {
 		this.setSrc();
 	}
 
-	update() {
+	update(canvasWidth, canvasHeight) {
 		// Bounce off edges
-		const atTopOrBot = this.y <= 0 || this.y + this.height >= bgHeight;
-		const atLeftOrRight = this.x <= 0 || this.x + this.width >= bgWidth;
+		const atTopOrBot = this.y <= 0 || this.y + this.height >= canvasHeight;
+		const atLeftOrRight = this.x <= 0 || this.x + this.width >= canvasWidth;
 
 		// Update logo's direction if necessary
 		if (atTopOrBot) {
-			addLogo();
 			this.vector.moveY *= -1;
 			this.changeColor();
 		}
 
 		if (atLeftOrRight) {
-			addLogo();
 			this.vector.moveX *= -1;
 			this.changeColor();
 		}
@@ -60,54 +105,15 @@ class Logo {
 	}
 }
 
-// Globals
-let bgWidth = 900;
-let bgHeight = 600;
-let logos = [new Logo()];
-
 const init = () => {
-	setCanvasSize();
-	addLogo();
+	const world = new World(document.getElementById("dvd"));
+	world.setSize();
+	world.addLogo();
 
-	window.requestAnimationFrame(draw);
-	window.addEventListener("resize", setCanvasSize);
-};
+	window.requestAnimationFrame(world.draw);
+	window.addEventListener("resize", world.setSize);
 
-const setCanvasSize = () => {
-	// This prevent the "offscreen" bug;
-	logoX = 1;
-	logoY = 1;
-
-	const w = window.innerWidth;
-	const h = window.innerHeight;
-
-	canvas.setAttribute("width", `${w}px`);
-	canvas.setAttribute("height", `${h}px`);
-	bgWidth = w;
-	bgHeight = h;
-};
-
-const draw = () => {
-	// Clear the canvas
-	ctx.clearRect(0, 0, bgWidth, bgHeight);
-
-	// Draw black background
-	ctx.fillStyle = "#000";
-	ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
-	ctx.fillRect(0, 0, bgWidth, bgHeight);
-	ctx.save();
-
-	// Draw the logos
-	logos.forEach((logo) => {
-		logo.update();
-		ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
-	});
-
-	window.requestAnimationFrame(draw);
-};
-
-const addLogo = () => {
-	return new Logo();
+	world.canvas.addEventListener("click", world.addLogo);
 };
 
 init();
