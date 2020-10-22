@@ -3,42 +3,71 @@ const ctx = canvas.getContext("2d");
 
 class Logo {
 	constructor() {
-		this.x = 1;
-		this.y = 1;
+		this.image = new Image();
+		this.x = Math.random() * 100;
+		this.y = Math.random() * 100;
 		this.width = 110;
 		this.height = 75;
 		this.vector = {
-			moveX = 4,
-			moveY = 4
-		}
+			moveX: 4,
+			moveY: 4
+		};
 		this.imagePaths = [
 			"images/dvd-logo-white.svg",
-			"images/dvd-logo-2.svg",
-			"images/dvd-logo-3.svg",
-			"images/dvd-logo-4.svg"
-		]
-		this.imagePathIndex = 0
+			"images/dvd-logo-pink.svg",
+			"images/dvd-logo-yellow.svg",
+			"images/dvd-logo-blue.svg"
+		];
+		this.imagePathIndex = 0;
+		this.setSrc();
+	}
+
+	setSrc() {
+		this.image.src = this.imagePaths[this.imagePathIndex];
+	}
+
+	changeColor() {
+		if (this.imagePathIndex === this.imagePaths.length - 1) {
+			this.imagePathIndex = 0;
+		} else {
+			this.imagePathIndex++;
+		}
+
+		this.setSrc();
+	}
+
+	update() {
+		// Bounce off edges
+		const atTopOrBot = this.y <= 0 || this.y + this.height >= bgHeight;
+		const atLeftOrRight = this.x <= 0 || this.x + this.width >= bgWidth;
+
+		// Update logo's direction if necessary
+		if (atTopOrBot) {
+			addLogo();
+			this.vector.moveY *= -1;
+			this.changeColor();
+		}
+
+		if (atLeftOrRight) {
+			addLogo();
+			this.vector.moveX *= -1;
+			this.changeColor();
+		}
+
+		// Move logo along its vector
+		this.x += this.vector.moveX;
+		this.y += this.vector.moveY;
 	}
 }
 
-let logo = new Image();
-
 // Globals
-// let bgWidth = 900;
-// let bgHeight = 600;
-// let logoX = 1;
-// let logoY = 1;
-// let logoWidth = 110;
-// let logoHeight = 75;
-// let logoVector = {
-// 	changeX: 4,
-// 	changeY: 4
-// };
-// let logoImageIndex = 0;
+let bgWidth = 900;
+let bgHeight = 600;
+let logos = [new Logo()];
 
 const init = () => {
 	setCanvasSize();
-	changeColor();
+	addLogo();
 
 	window.requestAnimationFrame(draw);
 	window.addEventListener("resize", setCanvasSize);
@@ -68,49 +97,17 @@ const draw = () => {
 	ctx.fillRect(0, 0, bgWidth, bgHeight);
 	ctx.save();
 
-	updateLogo();
+	// Draw the logos
+	logos.forEach((logo) => {
+		logo.update();
+		ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
+	});
 
-	// Draw the logo
-	ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
 	window.requestAnimationFrame(draw);
 };
 
-// Update the logo position and color
-const updateLogo = () => {
-	// Bounce off edges
-	const atTopOrBot = logoY <= 0 || logoY + logoHeight >= bgHeight;
-	const atLeftOrRight = logoX <= 0 || logoX + logoWidth >= bgWidth;
-
-	// Update logo's direction if necessary
-	if (atTopOrBot) {
-		addLogo();
-		logoVector.changeY *= -1;
-		changeColor();
-	}
-
-	if (atLeftOrRight) {
-		addLogo();
-		logoVector.changeX *= -1;
-		changeColor();
-	}
-
-	// Move logo along its vector
-	logoX += logoVector.changeX;
-	logoY += logoVector.changeY;
-};
-
-const changeColor = () => {
-	if (logoImageIndex === logoImages.length - 1) {
-		logoImageIndex = 0;
-	} else {
-		logoImageIndex++;
-	}
-
-	logo.src = logoImages[logoImageIndex];
-};
-
 const addLogo = () => {
-	console.log("added logo")
-}
+	return new Logo();
+};
 
 init();
