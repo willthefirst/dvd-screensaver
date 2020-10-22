@@ -51,8 +51,8 @@ class World {
 class Logo {
 	constructor() {
 		this.image = new Image();
-		this.x = Math.random() * 100;
-		this.y = Math.random() * 100;
+		this.x = 1;
+		this.y = 1;
 		this.width = 110;
 		this.height = 75;
 		this.vector = {
@@ -65,7 +65,7 @@ class Logo {
 			"images/dvd-logo-yellow.svg",
 			"images/dvd-logo-blue.svg"
 		];
-		this.imagePathIndex = 0;
+		this.imagePathIndex = Math.floor(Math.random() * this.imagePaths.length);
 		this.setSrc();
 	}
 
