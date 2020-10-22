@@ -44,20 +44,22 @@ class World {
 	}.bind(this);
 
 	addLogo = function () {
-		this.logos.push(new Logo());
+		const x = (Math.random() * this.width) / 2;
+		const y = (Math.random() * this.height) / 2;
+		this.logos.push(new Logo(x, y));
 	}.bind(this);
 }
 
 class Logo {
-	constructor() {
+	constructor(xCoor, yCoor) {
 		this.image = new Image();
-		this.x = 1;
-		this.y = 1;
+		this.x = xCoor;
+		this.y = yCoor;
 		this.width = 110;
 		this.height = 75;
 		this.vector = {
-			moveX: 4,
-			moveY: 4
+			moveX: posOrNeg(4),
+			moveY: posOrNeg(4)
 		};
 		this.imagePaths = [
 			"images/dvd-logo-white.svg",
@@ -85,16 +87,16 @@ class Logo {
 
 	update(canvasWidth, canvasHeight) {
 		// Bounce off edges
-		const atTopOrBot = this.y <= 0 || this.y + this.height >= canvasHeight;
-		const atLeftOrRight = this.x <= 0 || this.x + this.width >= canvasWidth;
+		const verticalImpact = this.y <= 0 || this.y + this.height >= canvasHeight;
+		const horizontalImpact = this.x <= 0 || this.x + this.width >= canvasWidth;
 
 		// Update logo's direction if necessary
-		if (atTopOrBot) {
+		if (verticalImpact) {
 			this.vector.moveY *= -1;
 			this.changeColor();
 		}
 
-		if (atLeftOrRight) {
+		if (horizontalImpact) {
 			this.vector.moveX *= -1;
 			this.changeColor();
 		}
@@ -109,6 +111,8 @@ const init = () => {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 	world.addLogo();
+	world.addLogo();
+	world.addLogo();
 
 	window.requestAnimationFrame(world.draw);
 	window.addEventListener("resize", world.setSize);
@@ -117,3 +121,8 @@ const init = () => {
 };
 
 init();
+
+/* Utilities */
+function posOrNeg(n) {
+	return Math.floor(Math.random() * 2) === 0 ? n : -n
+}
