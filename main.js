@@ -5,6 +5,7 @@ class World {
 		this.logos = [];
 		this.height = 600;
 		this.width = 900;
+		this.mousePos = { x: 0, y: 0 };
 	}
 
 	draw = function () {
@@ -19,7 +20,7 @@ class World {
 
 		// Draw the logos
 		this.logos.forEach((logo) => {
-			logo.update(this.width, this.height);
+			logo.updatePos(this.width, this.height);
 			this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
 		});
 
@@ -46,6 +47,23 @@ class World {
 	addLogo = function (x, y, moveX, moveY) {
 		this.logos.push(new Logo(x, y, moveX, moveY));
 	}.bind(this);
+
+	getMousePos = function (e) {
+		const rect = this.canvas;
+		return {
+			x: e.clientX - rect.clientLeft,
+			y: e.clientY - rect.clientTop
+		};
+	}.bind(this);
+
+	onMouseUpdate = function (e) {
+		const p = this.getMousePos(e);
+		this.logos.forEach((logo) => {
+			if (logo.pointVsRectangle(p)) {
+				logo.nextColor();
+			}
+		});
+	}.bind(this);
 }
 
 class Point {
@@ -65,6 +83,13 @@ class Rect {
 			moveY: moveY
 		};
 	}
+
+	pointVsRectangle = function (p) {
+		const isInsideX = p.x >= this.x && p.x <= this.x + this.width;
+		const isInsideY = p.y >= this.y && p.y <= this.y + this.height;
+
+		return isInsideX && isInsideY;
+	}.bind(this);
 }
 
 class Logo extends Rect {
@@ -85,7 +110,7 @@ class Logo extends Rect {
 		this.image.src = this.imagePaths[this.imagePathIndex];
 	}
 
-	changeColor() {
+	nextColor() {
 		if (this.imagePathIndex === this.imagePaths.length - 1) {
 			this.imagePathIndex = 0;
 		} else {
@@ -95,7 +120,7 @@ class Logo extends Rect {
 		this.setSrc();
 	}
 
-	update(canvasWidth, canvasHeight) {
+	updatePos(canvasWidth, canvasHeight) {
 		// Bounce off edges
 		const verticalImpact = this.y <= 0 || this.y + this.height >= canvasHeight;
 		const horizontalImpact = this.x <= 0 || this.x + this.width >= canvasWidth;
@@ -103,12 +128,12 @@ class Logo extends Rect {
 		// Update logo's direction if necessary
 		if (verticalImpact) {
 			this.vector.moveY *= -1;
-			this.changeColor();
+			this.nextColor();
 		}
 
 		if (horizontalImpact) {
 			this.vector.moveX *= -1;
-			this.changeColor();
+			this.nextColor();
 		}
 
 		// Move logo along its vector
@@ -122,7 +147,10 @@ const init = () => {
 	world.setSize();
 
 	world.addLogo(500, 250, 0, 0);
-	world.addLogo(400, 250, 10, 0);
+	// world.addLogo(400, 250, 10, 0);
+
+	// Temporary testing of pointVSRect
+	window.addEventListener("click", world.onMouseUpdate);
 
 	window.requestAnimationFrame(world.draw);
 	window.addEventListener("resize", world.setSize);
@@ -135,11 +163,4 @@ init();
 /* Utilities */
 function posOrNeg(n) {
 	return Math.floor(Math.random() * 2) === 0 ? n : -n;
-}
-
-function pointVsRectangle(p, r) {
-	isInsideX = p.x >= r.x && p.x <= r.x + r.width;
-	isInsideY = p.y >= r.y && p.y <= r.y + r.height;
-
-	return isInsideX && isInsideY;
 }
