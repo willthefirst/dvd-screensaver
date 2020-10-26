@@ -43,10 +43,8 @@ class World {
 		this.height = h;
 	}.bind(this);
 
-	addLogo = function () {
-		const x = (Math.random() * this.width) / 2;
-		const y = (Math.random() * this.height) / 2;
-		this.logos.push(new Logo(x, y));
+	addLogo = function (x, y, moveX, moveY) {
+		this.logos.push(new Logo(x, y, moveX, moveY));
 	}.bind(this);
 }
 
@@ -70,8 +68,8 @@ class Rect {
 }
 
 class Logo extends Rect {
-	constructor(xCoor, yCoor) {
-		super(xCoor, yCoor, 110, 75, posOrNeg(4), posOrNeg(4));
+	constructor(xCoor, yCoor, moveX, moveY) {
+		super(xCoor, yCoor, 110, 75, moveX, moveY);
 		this.image = new Image();
 		this.imagePaths = [
 			"images/dvd-logo-white.svg",
@@ -123,8 +121,8 @@ const init = () => {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 
-	world.addLogo();
-	world.addLogo();
+	world.addLogo(500, 250, 0, 0);
+	world.addLogo(400, 250, 10, 0);
 
 	window.requestAnimationFrame(world.draw);
 	window.addEventListener("resize", world.setSize);
