@@ -58,11 +58,17 @@ class World {
 
 	onMouseUpdate = function (e) {
 		const p = this.getMousePos(e);
-		this.logos.forEach((logo) => {
-			if (logo.pointVsRectangle(p)) {
-				logo.nextColor();
-			}
-		});
+		const secondLogo = this.logos[1];
+		secondLogo.x = p.x;
+		secondLogo.y = p.y;
+
+		if (secondLogo.rectVsRect(this.logos[0])) {
+			secondLogo.imagePathIndex = 0;
+			secondLogo.setSrc();
+		} else {
+			secondLogo.imagePathIndex = 1;
+			secondLogo.setSrc();
+		}
 	}.bind(this);
 }
 
@@ -84,10 +90,15 @@ class Rect {
 		};
 	}
 
-	pointVsRectangle = function (p) {
+	pointVsRect = function (p) {
 		const isInsideX = p.x >= this.x && p.x <= this.x + this.width;
 		const isInsideY = p.y >= this.y && p.y <= this.y + this.height;
+		return isInsideX && isInsideY;
+	}.bind(this);
 
+	rectVsRect = function (r) {
+		const isInsideX = this.x <= r.x + r.width && this.x + this.width >= r.x;
+		const isInsideY = this.y <= r.y + r.height && this.y + this.height >= r.y;
 		return isInsideX && isInsideY;
 	}.bind(this);
 }
@@ -147,10 +158,10 @@ const init = () => {
 	world.setSize();
 
 	world.addLogo(500, 250, 0, 0);
-	// world.addLogo(400, 250, 10, 0);
+	world.addLogo(0, 0, 0, 0);
 
 	// Temporary testing of pointVSRect
-	window.addEventListener("click", world.onMouseUpdate);
+	window.addEventListener("mousemove", world.onMouseUpdate);
 
 	window.requestAnimationFrame(world.draw);
 	window.addEventListener("resize", world.setSize);
