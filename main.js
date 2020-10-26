@@ -56,17 +56,23 @@ class Point {
 	}
 }
 
-class Logo {
-	constructor(xCoor, yCoor) {
-		this.image = new Image();
+class Rect {
+	constructor(xCoor, yCoor, width, height, moveX, moveY) {
 		this.x = xCoor;
 		this.y = yCoor;
 		this.width = 110;
 		this.height = 75;
 		this.vector = {
-			moveX: posOrNeg(4),
-			moveY: posOrNeg(4)
+			moveX: moveX,
+			moveY: moveY
 		};
+	}
+}
+
+class Logo extends Rect {
+	constructor(xCoor, yCoor) {
+		super(xCoor, yCoor, 110, 75, posOrNeg(4), posOrNeg(4));
+		this.image = new Image();
 		this.imagePaths = [
 			"images/dvd-logo-white.svg",
 			"images/dvd-logo-pink.svg",
