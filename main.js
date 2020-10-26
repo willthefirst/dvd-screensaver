@@ -78,7 +78,17 @@ class Point {
 	}
 }
 
+/** Class representing a rectangle. */
 class Rect {
+	/**
+	 * Creates a rectangle.
+	 * @param  {number} xCoor
+	 * @param  {number} yCoor
+	 * @param  {number} width
+	 * @param  {number} height
+	 * @param  {number} moveX
+	 * @param  {number} moveY
+	 */
 	constructor(xCoor, yCoor, width, height, moveX, moveY) {
 		this.x = xCoor;
 		this.y = yCoor;
@@ -90,12 +100,23 @@ class Rect {
 		};
 	}
 
+	/**
+	 * Determines if a point overlaps this rectangle.
+	 * @param  {x: number, y: number} p
+	 * @returns {Boolean}
+	 */
 	pointVsRect = function (p) {
 		const isInsideX = p.x >= this.x && p.x <= this.x + this.width;
 		const isInsideY = p.y >= this.y && p.y <= this.y + this.height;
 		return isInsideX && isInsideY;
 	}.bind(this);
 
+	
+	/**
+	 * Determines if a rectangle overlaps this rectangle.
+	 * @param  {Rect} r
+	 * @returns {Boolean}
+	 */
 	rectVsRect = function (r) {
 		const isInsideX = this.x <= r.x + r.width && this.x + this.width >= r.x;
 		const isInsideY = this.y <= r.y + r.height && this.y + this.height >= r.y;
@@ -103,7 +124,16 @@ class Rect {
 	}.bind(this);
 }
 
+/** Class representing a DVD logo.
+ * @extends Rect
+ */
 class Logo extends Rect {
+	/**
+	 * @param  {number} xCoor
+	 * @param  {number} yCoor
+	 * @param  {number} moveX
+	 * @param  {number} moveY
+	 */
 	constructor(xCoor, yCoor, moveX, moveY) {
 		super(xCoor, yCoor, 110, 75, moveX, moveY);
 		this.image = new Image();
