@@ -6,6 +6,17 @@ class World {
 		this.height = 600;
 		this.width = 900;
 		this.mousePos = { x: 0, y: 0 };
+		this.cursorRay = {
+			x: 100,
+			y: 100
+		};
+		this.rects = [
+			{
+				color: "#fff",
+				dims: new Rect(500, 200, 100, 100, 0, 0)
+			}
+		];
+		this.collisionRay = new Ray(0, 0, 0, 0);
 	}
 
 	draw = function () {
@@ -18,11 +29,35 @@ class World {
 		this.ctx.fillRect(0, 0, this.width, this.height);
 		this.ctx.save();
 
-		// Draw the logos
-		this.logos.forEach((logo) => {
-			logo.updatePos(this.width, this.height);
-			this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
+		// // Draw the logos
+		// this.logos.forEach((logo) => {
+		// 	logo.updatePos(this.width, this.height);
+		// 	this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
+		// });
+
+		this.rects.forEach((rect) => {
+			this.ctx.fillStyle = rect.color;
+			this.ctx.fillRect(rect.dims.x, rect.dims.y, rect.dims.width, rect.dims.height);
 		});
+
+		// Draw a collision ray
+		this.ctx.strokeStyle = "yellow";
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.collisionRay.x, this.collisionRay.y);
+		this.ctx.lineTo(
+			this.collisionRay.x + this.collisionRay.dX * 100,
+			this.collisionRay.y + this.collisionRay.dY * 100
+		);
+		this.ctx.lineWidth = 5;
+		this.ctx.stroke();
+
+		// Temp: draw our cursorRay
+		this.ctx.strokeStyle = "white";
+		this.ctx.beginPath();
+		this.ctx.moveTo(0, 0);
+		this.ctx.lineTo(this.cursorRay.x, this.cursorRay.y);
+		this.ctx.lineWidth = 5;
+		this.ctx.stroke();
 
 		window.requestAnimationFrame(this.draw);
 	}.bind(this);
@@ -58,28 +93,51 @@ class World {
 
 	onMouseUpdate = function (e) {
 		const p = this.getMousePos(e);
-		const secondLogo = this.logos[1];
-		secondLogo.x = p.x;
-		secondLogo.y = p.y;
+		const ray = new Ray(10, 10, p.x, p.y);
 
-		if (secondLogo.rectVsRect(this.logos[0])) {
-			secondLogo.imagePathIndex = 0;
-			secondLogo.setSrc();
+		this.cursorRay.x = p.x;
+		this.cursorRay.y = p.y;
+
+		const collisionResult = this.rects[0].dims.rayVsRect(ray);
+		if (collisionResult.doesIntersect && collisionResult.t < 1) {
+			this.rects[0].color = "red";
+			this.collisionRay = collisionResult.cRay;
 		} else {
-			secondLogo.imagePathIndex = 1;
-			secondLogo.setSrc();
+			this.rects[0].color = "white";
+			this.collisionRay = new Ray(0, 0, 0, 0);
 		}
 	}.bind(this);
 }
 
+/** Class representing a point. */
 class Point {
+	/**
+	 * @param  {number} xCoor
+	 * @param  {number} yCoor
+	 */
 	constructor(xCoor, yCoor) {
 		(this.x = xCoor), (this.y = yCoor);
 	}
 }
 
+/** Class representing a vector. */
+class Ray extends Point {
+	/**
+	 * Creates a vector.
+	 * @param  {number} oX - Origin x
+	 * @param  {number} oY - Origin y
+	 * @param  {number} dX - Direction x
+	 * @param  {number} dY - Direction y
+	 */
+	constructor(oX, oY, dX, dY) {
+		super(oX, oY);
+		this.dX = dX;
+		this.dY = dY;
+	}
+}
+
 /** Class representing a rectangle. */
-class Rect {
+class Rect extends Point {
 	/**
 	 * Creates a rectangle.
 	 * @param  {number} xCoor
@@ -90,8 +148,7 @@ class Rect {
 	 * @param  {number} moveY
 	 */
 	constructor(xCoor, yCoor, width, height, moveX, moveY) {
-		this.x = xCoor;
-		this.y = yCoor;
+		super(xCoor, yCoor);
 		this.width = 110;
 		this.height = 75;
 		this.vector = {
@@ -102,8 +159,8 @@ class Rect {
 
 	/**
 	 * Determines if a point overlaps this rectangle.
-	 * @param  {x: number, y: number} p
-	 * @returns {Boolean}
+	 * @param  {Point} p
+	 * @returns {boolean}
 	 */
 	pointVsRect = function (p) {
 		const isInsideX = p.x >= this.x && p.x <= this.x + this.width;
@@ -111,17 +168,95 @@ class Rect {
 		return isInsideX && isInsideY;
 	}.bind(this);
 
-	
 	/**
 	 * Determines if a rectangle overlaps this rectangle.
 	 * @param  {Rect} r
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	rectVsRect = function (r) {
 		const isInsideX = this.x <= r.x + r.width && this.x + this.width >= r.x;
 		const isInsideY = this.y <= r.y + r.height && this.y + this.height >= r.y;
 		return isInsideX && isInsideY;
 	}.bind(this);
+
+	/**
+	 * @typedef {Object} CollisionInfo
+	 * @property {boolean} doesIntersect - True if the ray intersects
+	 * @property {Ray} cRay - The coordinates (origin) and normal (direction) of the near contact point.
+	 * @property {number} t - Time until contact
+	 */
+
+	/**
+	 * Determines if a ray intersects this rectangle.
+	 * @param  {Ray} r
+	 * @returns {CollisionInfo} collisionInfo - Object containing information about possible intersection.
+	 */
+	rayVsRect = function (r) {
+		let collisionInfo = {
+			doesIntersect: false,
+			cRay: null,
+			t: null
+		};
+
+		let tNear = {
+			x: (this.x - r.x) / r.dX,
+			y: (this.y - r.y) / r.dY
+		};
+		let tFar = {
+			x: (this.x + this.width - r.x) / r.dX,
+			y: (this.y + this.height - r.y) / r.dY
+		};
+
+		// Sort tNear and tFar
+		if (tNear.x > tFar.x) {
+			const tNearX_ = tNear.x;
+			tNear.x = tFar.x;
+			tFar.x = tNearX_;
+		} else if (tNear.y > tFar.y) {
+			const tNearY_ = tNear.y;
+			tNear.y = tFar.y;
+			tFar.y = tNearY_;
+		}
+
+		// If no intersection, return false
+		if (tNear.x > tFar.y || tNear.y > tFar.x) {
+			return collisionInfo;
+		}
+
+		const tNearHit = Math.max(tNear.x, tNear.y);
+		const tFarHit = Math.min(tFar.x, tFar.y);
+
+		if (tFarHit < 0) {
+			return collisionInfo;
+		}
+
+		const contactPoint = new Point(r.x + tNearHit * r.dX, r.y + tNearHit * r.dY);
+
+		let contactNormal;
+
+		if (tNear.x > tNear.y) {
+			if (r.dX < 0) {
+				contactNormal = { x: 1, y: 0 };
+			} else {
+				contactNormal = { x: -1, y: 0 };
+			}
+		} else {
+			if (r.dY < 0) {
+				contactNormal = { x: 0, y: 1 };
+			} else {
+				contactNormal = { x: 0, y: -1 };
+			}
+		}
+
+		collisionInfo.doesIntersect = true;
+		collisionInfo.tNearHit = tNearHit;
+		collisionInfo = {
+			doesIntersect: true,
+			cRay: new Ray(contactPoint.x, contactPoint.y, contactNormal.x, contactNormal.y),
+			t: tNearHit
+		};
+		return collisionInfo;
+	};
 }
 
 /** Class representing a DVD logo.
@@ -188,9 +323,8 @@ const init = () => {
 	world.setSize();
 
 	world.addLogo(500, 250, 0, 0);
-	world.addLogo(0, 0, 0, 0);
 
-	// Temporary testing of pointVSRect
+	// Temporary testing of rayVsRect
 	window.addEventListener("mousemove", world.onMouseUpdate);
 
 	window.requestAnimationFrame(world.draw);
