@@ -50,6 +50,12 @@ class World {
 	}.bind(this);
 }
 
+class Point {
+	constructor(xCoor, yCoor) {
+		(this.x = xCoor), (this.y = yCoor);
+	}
+}
+
 class Logo {
 	constructor(xCoor, yCoor) {
 		this.image = new Image();
@@ -110,7 +116,7 @@ class Logo {
 const init = () => {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
-	world.addLogo();
+
 	world.addLogo();
 	world.addLogo();
 
@@ -124,5 +130,12 @@ init();
 
 /* Utilities */
 function posOrNeg(n) {
-	return Math.floor(Math.random() * 2) === 0 ? n : -n
+	return Math.floor(Math.random() * 2) === 0 ? n : -n;
+}
+
+function pointVsRectangle(p, r) {
+	isInsideX = p.x >= r.x && p.x <= r.x + r.width;
+	isInsideY = p.y >= r.y && p.y <= r.y + r.height;
+
+	return isInsideX && isInsideY;
 }
