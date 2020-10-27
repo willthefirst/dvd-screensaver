@@ -2,7 +2,11 @@
 
 Inspired by: https://www.youtube.com/watch?v=-pdVUsCqd2U
 
-# Todo
+## Development
+
+`F5` will launch an instance of Chrome and the VS Code Debugger.
+
+## Todo
 
 - Continue from here: https://youtu.be/8JJ-4JgR7Dg?t=2003
     - ~~Get collision vector working perfectly with a ray coming from any angle.~~

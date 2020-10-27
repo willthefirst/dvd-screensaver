@@ -27,11 +27,31 @@ class World {
 		// 	this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
 		// });
 
-		this.rects.forEach((rect) => {
-			this.ctx.fillStyle = rect.fillColor;
-			rect.updatePos(this.width, this.height);
-			this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-		});
+		// this.rects.forEach((rect) => {
+		// 	this.ctx.fillStyle = rect.fillColor;
+		// 	rect.updatePos(this.width, this.height);
+		// 	this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+		// });
+
+		const staticRect = this.rects[0];
+
+		this.ctx.fillStyle = staticRect.fillColor;
+		staticRect.updatePos(this.width, this.height);
+		this.ctx.fillRect(staticRect.x, staticRect.y, staticRect.width, staticRect.height);
+
+		const movingRect = this.rects[1];
+
+		const collisionInfo = staticRect.dynamicRectVsRect(movingRect);
+
+		if (collisionInfo.doesIntersect) {
+			console.log("collision!")
+			movingRect.vector.moveX *= collisionInfo.cRay.dX;
+			movingRect.vector.moveY *= collisionInfo.cRay.dY;
+		}
+
+		this.ctx.fillStyle = movingRect.fillColor;
+		movingRect.updatePos(this.width, this.height);
+		this.ctx.fillRect(movingRect.x, movingRect.y, movingRect.width, movingRect.height);
 
 		// // Draw a collision ray
 		// this.ctx.strokeStyle = "yellow";
@@ -145,7 +165,7 @@ class Rect extends Point {
 	 * @param  {number} moveY
 	 * @param {string} fillColor
 	 */
-	constructor(xCoor, yCoor, width, height, moveX, moveY, fillColor = "#fff") {
+	constructor(xCoor, yCoor, width, height, moveX = 0, moveY = 0, fillColor = "#fff") {
 		super(xCoor, yCoor);
 		this.width = width;
 		this.height = height;
@@ -198,12 +218,12 @@ class Rect extends Point {
 		};
 
 		let tNear = {
-			x: (this.x - r.x) / r.dX,
-			y: (this.y - r.y) / r.dY
+			x: (this.x - r.x) / (this.x - r.x) * r.dX,
+			y: (this.y - r.y) / (this.y - r.y) * r.dY
 		};
 		let tFar = {
-			x: (this.x + this.width - r.x) / r.dX,
-			y: (this.y + this.height - r.y) / r.dY
+			x: (this.x + this.width - r.x) /(this.x - r.x) * r.dX,
+			y: (this.y + this.height - r.y) / (this.y - r.y) * r.dY
 		};
 
 		// Sort tNear and tFar
@@ -258,14 +278,34 @@ class Rect extends Point {
 		return collisionInfo;
 	};
 
-	dynamicRectVsRect = function (r) {};
+	/**
+	 * Determines if a moving rectangle intersects this rectangle
+	 * @param  {Rect} r
+	 * @returns {CollisionInfo} collisionInfo
+	 */
+	dynamicRectVsRect = function (r) {
+		// TODO Generate expanded target
+		const largerRect = new Rect(
+			this.x - r.width/2,
+			this.y - r.height/2,
+			this.width + r.width,
+			this.height + r.height
+		)
+
+		const centerX = r.x + r.width / 2;
+		const centerY = r.y + r.height / 2;
+		const ray = new Ray(centerX, centerY, r.vector.moveX, r.vector.moveY);
+
+		const collisionInfo = largerRect.rayVsRect(ray);
+		return collisionInfo;
+	}.bind(this);
 
 	updatePos(canvasWidth, canvasHeight) {
 		// Bounce off edges
 		const verticalImpact = this.y <= 0 || this.y + this.height >= canvasHeight;
 		const horizontalImpact = this.x <= 0 || this.x + this.width >= canvasWidth;
 
-		// Update logo's direction if necessary
+		// Bounce off of walls
 		if (verticalImpact) {
 			this.vector.moveY *= -1;
 		}
@@ -323,7 +363,7 @@ const init = () => {
 	world.setSize();
 
 	world.addRect(500, 250, 0, 0);
-	world.addRect(5, 250, 10, 0);
+	world.addRect(500, 400, 0, 10, "yellow");
 
 	// Temporary testing of rayVsRect
 	// window.addEventListener("mousemove", world.onMouseUpdate);
