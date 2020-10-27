@@ -2,17 +2,12 @@ class World {
 	constructor(canvasEl) {
 		this.canvas = canvasEl;
 		this.ctx = this.canvas.getContext("2d");
+		this.rects = [];
 		this.logos = [];
 		this.height = 600;
 		this.width = 900;
 		this.mousePos = { x: 0, y: 0 };
-		this.cursorRay = new Ray(0, 0, 0, 0)
-		this.rects = [
-			{
-				color: "#fff",
-				dims: new Rect(500, 200, 100, 100, 0, 0)
-			}
-		];
+		this.cursorRay = new Ray(0, 0, 0, 0);
 		this.collisionRay = new Ray(0, 0, 0, 0);
 	}
 
@@ -33,28 +28,29 @@ class World {
 		// });
 
 		this.rects.forEach((rect) => {
-			this.ctx.fillStyle = rect.color;
-			this.ctx.fillRect(rect.dims.x, rect.dims.y, rect.dims.width, rect.dims.height);
+			this.ctx.fillStyle = rect.fillColor;
+			rect.updatePos(this.width, this.height);
+			this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 		});
 
-		// Draw a collision ray
-		this.ctx.strokeStyle = "yellow";
-		this.ctx.beginPath();
-		this.ctx.moveTo(this.collisionRay.x, this.collisionRay.y);
-		this.ctx.lineTo(
-			this.collisionRay.x + this.collisionRay.dX * 100,
-			this.collisionRay.y + this.collisionRay.dY * 100
-		);
-		this.ctx.lineWidth = 5;
-		this.ctx.stroke();
+		// // Draw a collision ray
+		// this.ctx.strokeStyle = "yellow";
+		// this.ctx.beginPath();
+		// this.ctx.moveTo(this.collisionRay.x, this.collisionRay.y);
+		// this.ctx.lineTo(
+		// 	this.collisionRay.x + this.collisionRay.dX * 100,
+		// 	this.collisionRay.y + this.collisionRay.dY * 100
+		// );
+		// this.ctx.lineWidth = 5;
+		// this.ctx.stroke();
 
-		// Temp: draw our cursorRay
-		this.ctx.strokeStyle = "white";
-		this.ctx.beginPath();
-		this.ctx.moveTo(this.cursorRay.x, this.cursorRay.y);
-		this.ctx.lineTo(this.cursorRay.x + this.cursorRay.dX, this.cursorRay.y + this.cursorRay.dY);
-		this.ctx.lineWidth = 5;
-		this.ctx.stroke();
+		// // Temp: draw our cursorRay
+		// this.ctx.strokeStyle = "white";
+		// this.ctx.beginPath();
+		// this.ctx.moveTo(this.cursorRay.x, this.cursorRay.y);
+		// this.ctx.lineTo(this.cursorRay.x + this.cursorRay.dX, this.cursorRay.y + this.cursorRay.dY);
+		// this.ctx.lineWidth = 5;
+		// this.ctx.stroke();
 
 		window.requestAnimationFrame(this.draw);
 	}.bind(this);
@@ -76,6 +72,10 @@ class World {
 		this.height = h;
 	}.bind(this);
 
+	addRect = function (x, y, moveX, moveY, color) {
+		this.rects.push(new Rect(x, y, 50, 50, moveX, moveY, color));
+	}.bind(this);
+
 	addLogo = function (x, y, moveX, moveY) {
 		this.logos.push(new Logo(x, y, moveX, moveY));
 	}.bind(this);
@@ -94,13 +94,14 @@ class World {
 
 		this.cursorRay = ray;
 
-		const collisionResult = this.rects[0].dims.rayVsRect(ray);
+		const collisionResult = this.rects[0].rayVsRect(ray);
+
 		if (collisionResult.doesIntersect && collisionResult.t < 1) {
-			this.rects[0].color = "red";
+			// this.rects[0].color = "red";
 			this.collisionRay = collisionResult.cRay;
 		} else {
-			this.rects[0].color = "white";
-			this.collisionRay = new Ray(0, 0, 0, 0);
+			// this.rects[0].color = "white";
+			// this.collisionRay = new Ray(0, 0, 0, 0);
 		}
 	}.bind(this);
 }
@@ -116,10 +117,10 @@ class Point {
 	}
 }
 
-/** Class representing a vector. */
+/** Class representing a ray. */
 class Ray extends Point {
 	/**
-	 * Creates a vector.
+	 * Creates a ray.
 	 * @param  {number} oX - Origin x
 	 * @param  {number} oY - Origin y
 	 * @param  {number} dX - Direction x
@@ -142,15 +143,17 @@ class Rect extends Point {
 	 * @param  {number} height
 	 * @param  {number} moveX
 	 * @param  {number} moveY
+	 * @param {string} fillColor
 	 */
-	constructor(xCoor, yCoor, width, height, moveX, moveY) {
+	constructor(xCoor, yCoor, width, height, moveX, moveY, fillColor = "#fff") {
 		super(xCoor, yCoor);
-		this.width = 110;
-		this.height = 75;
+		this.width = width;
+		this.height = height;
 		this.vector = {
 			moveX: moveX,
 			moveY: moveY
 		};
+		this.fillColor = fillColor;
 	}
 
 	/**
@@ -208,8 +211,7 @@ class Rect extends Point {
 			const tNearX_ = tNear.x;
 			tNear.x = tFar.x;
 			tFar.x = tNearX_;
-		} 
-		
+		}
 		if (tNear.y > tFar.y) {
 			const tNearY_ = tNear.y;
 			tNear.y = tFar.y;
@@ -255,6 +257,27 @@ class Rect extends Point {
 		};
 		return collisionInfo;
 	};
+
+	dynamicRectVsRect = function (r) {};
+
+	updatePos(canvasWidth, canvasHeight) {
+		// Bounce off edges
+		const verticalImpact = this.y <= 0 || this.y + this.height >= canvasHeight;
+		const horizontalImpact = this.x <= 0 || this.x + this.width >= canvasWidth;
+
+		// Update logo's direction if necessary
+		if (verticalImpact) {
+			this.vector.moveY *= -1;
+		}
+
+		if (horizontalImpact) {
+			this.vector.moveX *= -1;
+		}
+
+		// Move logo along its vector
+		this.x += this.vector.moveX;
+		this.y += this.vector.moveY;
+	}
 }
 
 /** Class representing a DVD logo.
@@ -293,42 +316,23 @@ class Logo extends Rect {
 
 		this.setSrc();
 	}
-
-	updatePos(canvasWidth, canvasHeight) {
-		// Bounce off edges
-		const verticalImpact = this.y <= 0 || this.y + this.height >= canvasHeight;
-		const horizontalImpact = this.x <= 0 || this.x + this.width >= canvasWidth;
-
-		// Update logo's direction if necessary
-		if (verticalImpact) {
-			this.vector.moveY *= -1;
-			this.nextColor();
-		}
-
-		if (horizontalImpact) {
-			this.vector.moveX *= -1;
-			this.nextColor();
-		}
-
-		// Move logo along its vector
-		this.x += this.vector.moveX;
-		this.y += this.vector.moveY;
-	}
 }
 
 const init = () => {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 
-	world.addLogo(500, 250, 0, 0);
+	world.addRect(500, 250, 0, 0);
+	world.addRect(5, 250, 10, 0);
 
 	// Temporary testing of rayVsRect
-	window.addEventListener("mousemove", world.onMouseUpdate);
+	// window.addEventListener("mousemove", world.onMouseUpdate);
 
 	window.requestAnimationFrame(world.draw);
+
 	window.addEventListener("resize", world.setSize);
 
-	world.canvas.addEventListener("click", world.addLogo);
+	// world.canvas.addEventListener("click", world.addLogo);
 };
 
 init();
