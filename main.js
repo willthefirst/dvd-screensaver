@@ -6,10 +6,7 @@ class World {
 		this.height = 600;
 		this.width = 900;
 		this.mousePos = { x: 0, y: 0 };
-		this.cursorRay = {
-			x: 100,
-			y: 100
-		};
+		this.cursorRay = new Ray(0, 0, 0, 0)
 		this.rects = [
 			{
 				color: "#fff",
@@ -54,8 +51,8 @@ class World {
 		// Temp: draw our cursorRay
 		this.ctx.strokeStyle = "white";
 		this.ctx.beginPath();
-		this.ctx.moveTo(0, 0);
-		this.ctx.lineTo(this.cursorRay.x, this.cursorRay.y);
+		this.ctx.moveTo(this.cursorRay.x, this.cursorRay.y);
+		this.ctx.lineTo(this.cursorRay.x + this.cursorRay.dX, this.cursorRay.y + this.cursorRay.dY);
 		this.ctx.lineWidth = 5;
 		this.ctx.stroke();
 
@@ -93,10 +90,9 @@ class World {
 
 	onMouseUpdate = function (e) {
 		const p = this.getMousePos(e);
-		const ray = new Ray(10, 10, p.x, p.y);
+		const ray = new Ray(0, 0, p.x - 0, p.y - 0);
 
-		this.cursorRay.x = p.x;
-		this.cursorRay.y = p.y;
+		this.cursorRay = ray;
 
 		const collisionResult = this.rects[0].dims.rayVsRect(ray);
 		if (collisionResult.doesIntersect && collisionResult.t < 1) {
@@ -212,7 +208,9 @@ class Rect extends Point {
 			const tNearX_ = tNear.x;
 			tNear.x = tFar.x;
 			tFar.x = tNearX_;
-		} else if (tNear.y > tFar.y) {
+		} 
+		
+		if (tNear.y > tFar.y) {
 			const tNearY_ = tNear.y;
 			tNear.y = tFar.y;
 			tFar.y = tNearY_;
