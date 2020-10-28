@@ -330,7 +330,7 @@ const init = () => {
 	world.setSize();
 
 	world.addRect(500, 250, 0, 0);
-	world.addRect(500, 400, 0.5, 10, "yellow");
+	world.addRect(500, 400, 25, 20, "yellow");
 
 	window.requestAnimationFrame(world.draw);
 
