@@ -92,9 +92,22 @@ class World {
 	 * @returns {Rect[]} - an array of rectangles that are colliding
 	 */
 	findCollisions = function (rects) {
-		const sortedByX = sortObjectsByKey('x', rects);
-		console.log(rects);
-		console.log(sortedByX);
+		// TODO find the highest variance axis (then you can sort on that)
+
+		const sortedByX = sortObjectsByKey("x", rects);
+		const sortedByY = sortObjectsByKey("y", rects);
+		
+		// Sort objects by X coordinate.
+			// If obj2_X falls within obj1's x bounds, they *might* be colliding.
+				// If obj2_Y falls in obj2's y bounds, they ARE colliding!
+					// TODO what do we do once we know about these collisions?
+				// Now we have check obj3...X against obj1, since it might also be colliding.
+					// If so, same things as the above TODO
+					// ONCE this fails, we can go back to the beginning of this loop, incrementing to obj2.
+			// Else (obj2 and obj1 are not colliding)
+				// We KNOW that obj3...objX CANNOT be colliding with ob1
+				// Increment (ie. restart the loop) the obj we're checking against (in this case, obj 2).
+
 	}.bind(this);
 
 	getMousePos = function (e) {
