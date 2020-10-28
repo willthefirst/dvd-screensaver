@@ -51,8 +51,8 @@ class World {
 			if (collisionInfo.cRay.dY !== 0) {
 				movingRect.vector.moveY *= -collisionInfo.cRay.dY;
 			}
+			
 		}
-
 		this.ctx.fillStyle = movingRect.fillColor;
 		movingRect.updatePos(this.width, this.height);
 		this.ctx.fillRect(movingRect.x, movingRect.y, movingRect.width, movingRect.height);
@@ -268,11 +268,12 @@ class Rect extends Point {
 	}.bind(this);
 
 	updatePos(canvasWidth, canvasHeight) {
+		// Check for collision with walls.
+
 		// Bounce off edges
 		const verticalImpact = this.y <= 0 || this.y + this.height >= canvasHeight;
 		const horizontalImpact = this.x <= 0 || this.x + this.width >= canvasWidth;
 
-		// Bounce off of walls
 		if (verticalImpact) {
 			this.vector.moveY *= -1;
 		}
@@ -329,8 +330,9 @@ const init = () => {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 
-	world.addRect(500, 250, 0, 0);
-	world.addRect(500, 400, 25, 20, "yellow");
+	world.addRect(1, 1, 10, 0, "blue");
+	world.addRect(600, 1, -10, 0, "yellow");
+	// world.addRect(300, 400, -10, 10, "red");
 
 	window.requestAnimationFrame(world.draw);
 
