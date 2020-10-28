@@ -22,34 +22,36 @@ class World {
 		// 	this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
 		// });
 
+		this.findCollisions(this.rects);
+
 		this.rects.forEach((rect) => {
 			rect.updatePos(this.width, this.height);
 			this.ctx.fillStyle = rect.fillColor;
 			this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 		});
 
-		const staticRect = this.rects[0];
+		// const staticRect = this.rects[0];
 
-		this.ctx.fillStyle = staticRect.fillColor;
-		staticRect.updatePos(this.width, this.height);
-		this.ctx.fillRect(staticRect.x, staticRect.y, staticRect.width, staticRect.height);
+		// this.ctx.fillStyle = staticRect.fillColor;
+		// staticRect.updatePos(this.width, this.height);
+		// this.ctx.fillRect(staticRect.x, staticRect.y, staticRect.width, staticRect.height);
 
-		const movingRect = this.rects[1];
+		// const movingRect = this.rects[1];
 
-		const collisionInfo = staticRect.dynamicRectVsRect(movingRect);
+		// const collisionInfo = staticRect.dynamicRectVsRect(movingRect);
 
-		if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
-			// If moving in a non-zero direction, switch directions.
-			if (collisionInfo.cRay.dX !== 0) {
-				movingRect.vector.moveX *= -1;
-			}
-			if (collisionInfo.cRay.dY !== 0) {
-				movingRect.vector.moveY *= -collisionInfo.cRay.dY;
-			}			
-		}
-		this.ctx.fillStyle = movingRect.fillColor;
-		movingRect.updatePos(this.width, this.height);
-		this.ctx.fillRect(movingRect.x, movingRect.y, movingRect.width, movingRect.height);
+		// if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
+		// 	// If moving in a non-zero direction, switch directions.
+		// 	if (collisionInfo.cRay.dX !== 0) {
+		// 		movingRect.vector.moveX *= -1;
+		// 	}
+		// 	if (collisionInfo.cRay.dY !== 0) {
+		// 		movingRect.vector.moveY *= -collisionInfo.cRay.dY;
+		// 	}
+		// }
+		// this.ctx.fillStyle = movingRect.fillColor;
+		// movingRect.updatePos(this.width, this.height);
+		// this.ctx.fillRect(movingRect.x, movingRect.y, movingRect.width, movingRect.height);
 
 		window.requestAnimationFrame(this.draw);
 	}.bind(this);
@@ -85,6 +87,8 @@ class World {
 	addLogo = function (x, y, moveX, moveY) {
 		this.logos.push(new Logo(x, y, moveX, moveY));
 	}.bind(this);
+
+	findCollisions = function (rects) {}.bind(this);
 
 	getMousePos = function (e) {
 		const rect = this.canvas;
@@ -331,14 +335,16 @@ const init = () => {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 
-	world.addRect(1, 1, 10, 0, "blue");
-	world.addRect(600, 1, -10, 0, "yellow");
-	// world.addRect(300, 400, -10, 10, "red");
+	world.addRect(250, 10, 0, 0, "red");
+	world.addRect(200, 10, 0, 0, "white");
+	world.addRect(375, 60, 0, 0, "red");
+	world.addRect(400, 40, 0, 0, "white");
+	world.addRect(30, 40, 0, 0, "red");
+	world.addRect(10, 10, 0, 0, "white");
+	world.addRect(600, 1, 0, 0, "white");
 
 	window.requestAnimationFrame(world.draw);
-
-	window.addEventListener("resize", world.setSize);
-
+	// window.addEventListener("resize", world.setSize);
 	// world.canvas.addEventListener("click", world.addLogo);
 };
 
