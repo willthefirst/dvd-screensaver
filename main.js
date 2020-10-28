@@ -43,8 +43,7 @@ class World {
 
 		const collisionInfo = staticRect.dynamicRectVsRect(movingRect);
 
-		if (collisionInfo.doesIntersect) {
-			console.log("collision!")
+		if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
 			movingRect.vector.moveX *= collisionInfo.cRay.dX;
 			movingRect.vector.moveY *= collisionInfo.cRay.dY;
 		}
@@ -93,7 +92,7 @@ class World {
 	}.bind(this);
 
 	addRect = function (x, y, moveX, moveY, color) {
-		this.rects.push(new Rect(x, y, 50, 50, moveX, moveY, color));
+		this.rects.push(new Rect(x, y, 100, 100, moveX, moveY, color));
 	}.bind(this);
 
 	addLogo = function (x, y, moveX, moveY) {
@@ -218,13 +217,15 @@ class Rect extends Point {
 		};
 
 		let tNear = {
-			x: (this.x - r.x) / (this.x - r.x) * r.dX,
-			y: (this.y - r.y) / (this.y - r.y) * r.dY
+			x: (this.x - r.x) / r.dX,
+			y: (this.y - r.y) / r.dY
 		};
 		let tFar = {
-			x: (this.x + this.width - r.x) /(this.x - r.x) * r.dX,
-			y: (this.y + this.height - r.y) / (this.y - r.y) * r.dY
+			x: (this.x + this.width - r.x) / r.dX,
+			y: (this.y + this.height - r.y) / r.dY
 		};
+
+		
 
 		// Sort tNear and tFar
 		if (tNear.x > tFar.x) {
@@ -280,11 +281,10 @@ class Rect extends Point {
 
 	/**
 	 * Determines if a moving rectangle intersects this rectangle
-	 * @param  {Rect} r
+	 * @param  {Rect} r - The moving rectangle
 	 * @returns {CollisionInfo} collisionInfo
 	 */
 	dynamicRectVsRect = function (r) {
-		// TODO Generate expanded target
 		const largerRect = new Rect(
 			this.x - r.width/2,
 			this.y - r.height/2,
@@ -294,7 +294,7 @@ class Rect extends Point {
 
 		const centerX = r.x + r.width / 2;
 		const centerY = r.y + r.height / 2;
-		const ray = new Ray(centerX, centerY, r.vector.moveX, r.vector.moveY);
+		const ray = new Ray(centerX, centerY, r.vector.moveX , r.vector.moveY);
 
 		const collisionInfo = largerRect.rayVsRect(ray);
 		return collisionInfo;
@@ -363,7 +363,7 @@ const init = () => {
 	world.setSize();
 
 	world.addRect(500, 250, 0, 0);
-	world.addRect(500, 400, 0, 10, "yellow");
+	world.addRect(500, 500, 0, -1, "yellow");
 
 	// Temporary testing of rayVsRect
 	// window.addEventListener("mousemove", world.onMouseUpdate);
