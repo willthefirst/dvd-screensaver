@@ -14,12 +14,7 @@ class World {
 	draw = function () {
 		// Clear the canvas
 		this.ctx.clearRect(0, 0, this.width, this.height);
-
-		// Draw black background
-		this.ctx.fillStyle = "#000";
-		this.ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
-		this.ctx.fillRect(0, 0, this.width, this.height);
-		this.ctx.save();
+		this.drawBackground();
 
 		// // Draw the logos
 		// this.logos.forEach((logo) => {
@@ -27,11 +22,11 @@ class World {
 		// 	this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
 		// });
 
-		// this.rects.forEach((rect) => {
-		// 	this.ctx.fillStyle = rect.fillColor;
-		// 	rect.updatePos(this.width, this.height);
-		// 	this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-		// });
+		this.rects.forEach((rect) => {
+			rect.updatePos(this.width, this.height);
+			this.ctx.fillStyle = rect.fillColor;
+			this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+		});
 
 		const staticRect = this.rects[0];
 
@@ -50,14 +45,20 @@ class World {
 			}
 			if (collisionInfo.cRay.dY !== 0) {
 				movingRect.vector.moveY *= -collisionInfo.cRay.dY;
-			}
-			
+			}			
 		}
 		this.ctx.fillStyle = movingRect.fillColor;
 		movingRect.updatePos(this.width, this.height);
 		this.ctx.fillRect(movingRect.x, movingRect.y, movingRect.width, movingRect.height);
 
 		window.requestAnimationFrame(this.draw);
+	}.bind(this);
+
+	drawBackground = function () {
+		this.ctx.fillStyle = "#000";
+		this.ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
+		this.ctx.fillRect(0, 0, this.width, this.height);
+		this.ctx.save();
 	}.bind(this);
 
 	setSize = function () {
