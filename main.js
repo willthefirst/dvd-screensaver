@@ -92,39 +92,9 @@ class World {
 	 * @returns {Rect[]} - an array of rectangles that are colliding
 	 */
 	findCollisions = function (rects) {
-		const sortedByX = this.sortByX(rects);
+		const sortedByX = sortObjectsByKey('x', rects);
 		console.log(rects);
 		console.log(sortedByX);
-	}.bind(this);
-
-	/**
-	 * Returns an array of rects sorted by their X coordinate, from lowest to highest.
-	 * @param  {Rect[]} rects
-	 * @returns {Rects[]}
-	 */
-	sortByX = function (rects) {
-		// Base case
-		if (rects.length <= 1) {
-			return rects;
-		}
-
-		// Pivot will be the last element in the array
-		const pivot = rects[0];
-		let left = [],
-			right = [];
-
-		// Check all elements after the pivot.
-		for (let i = 1; i < rects.length; i++) {
-			const rect = rects[i];
-
-			if (rect.x > pivot.x) {
-				right.push(rect);
-			} else {
-				left.push(rect);
-			}
-		}
-
-		return this.sortByX(left).concat([pivot]).concat(this.sortByX(right));
 	}.bind(this);
 
 	getMousePos = function (e) {
@@ -392,6 +362,43 @@ const init = () => {
 init();
 
 /* Utilities */
+
+/**
+ * Makes a number positive or negative, randomly.
+ * @param  {number} n
+ * @returns {number}
+ */
 function posOrNeg(n) {
 	return Math.floor(Math.random() * 2) === 0 ? n : -n;
+}
+
+/**
+ * Returns an array of objects sorted by a key from lowest to highest.
+ * @param  {string} key - key to sort on
+ * @param  {Object.<string, number>[]} objects - array of objects
+ * @returns {Object.<string, number>[]}
+ */
+function sortObjectsByKey(key, objects) {
+	// Base case
+	if (objects.length <= 1) {
+		return objects;
+	}
+
+	// Pivot will be the last element in the array
+	const pivot = objects[0];
+	let left = [],
+		right = [];
+
+	// Check all elements after the pivot.
+	for (let i = 1; i < objects.length; i++) {
+		const object = objects[i];
+
+		if (object[key] > pivot[key]) {
+			right.push(object);
+		} else {
+			left.push(object);
+		}
+	}
+
+	return sortObjectsByKey(key, left).concat([pivot]).concat(sortObjectsByKey(key, right));
 }
