@@ -44,32 +44,18 @@ class World {
 		const collisionInfo = staticRect.dynamicRectVsRect(movingRect);
 
 		if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
-			movingRect.vector.moveX *= collisionInfo.cRay.dX;
-			movingRect.vector.moveY *= collisionInfo.cRay.dY;
+			// If moving in a non-zero direction, switch directions.
+			if (collisionInfo.cRay.dX !== 0) {
+				movingRect.vector.moveX *= -1;
+			}
+			if (collisionInfo.cRay.dY !== 0) {
+				movingRect.vector.moveY *= -collisionInfo.cRay.dY;
+			}
 		}
 
 		this.ctx.fillStyle = movingRect.fillColor;
 		movingRect.updatePos(this.width, this.height);
 		this.ctx.fillRect(movingRect.x, movingRect.y, movingRect.width, movingRect.height);
-
-		// // Draw a collision ray
-		// this.ctx.strokeStyle = "yellow";
-		// this.ctx.beginPath();
-		// this.ctx.moveTo(this.collisionRay.x, this.collisionRay.y);
-		// this.ctx.lineTo(
-		// 	this.collisionRay.x + this.collisionRay.dX * 100,
-		// 	this.collisionRay.y + this.collisionRay.dY * 100
-		// );
-		// this.ctx.lineWidth = 5;
-		// this.ctx.stroke();
-
-		// // Temp: draw our cursorRay
-		// this.ctx.strokeStyle = "white";
-		// this.ctx.beginPath();
-		// this.ctx.moveTo(this.cursorRay.x, this.cursorRay.y);
-		// this.ctx.lineTo(this.cursorRay.x + this.cursorRay.dX, this.cursorRay.y + this.cursorRay.dY);
-		// this.ctx.lineWidth = 5;
-		// this.ctx.stroke();
 
 		window.requestAnimationFrame(this.draw);
 	}.bind(this);
@@ -105,23 +91,6 @@ class World {
 			x: e.clientX - rect.clientLeft,
 			y: e.clientY - rect.clientTop
 		};
-	}.bind(this);
-
-	onMouseUpdate = function (e) {
-		const p = this.getMousePos(e);
-		const ray = new Ray(0, 0, p.x - 0, p.y - 0);
-
-		this.cursorRay = ray;
-
-		const collisionResult = this.rects[0].rayVsRect(ray);
-
-		if (collisionResult.doesIntersect && collisionResult.t < 1) {
-			// this.rects[0].color = "red";
-			this.collisionRay = collisionResult.cRay;
-		} else {
-			// this.rects[0].color = "white";
-			// this.collisionRay = new Ray(0, 0, 0, 0);
-		}
 	}.bind(this);
 }
 
@@ -225,8 +194,6 @@ class Rect extends Point {
 			y: (this.y + this.height - r.y) / r.dY
 		};
 
-		
-
 		// Sort tNear and tFar
 		if (tNear.x > tFar.x) {
 			const tNearX_ = tNear.x;
@@ -286,15 +253,15 @@ class Rect extends Point {
 	 */
 	dynamicRectVsRect = function (r) {
 		const largerRect = new Rect(
-			this.x - r.width/2,
-			this.y - r.height/2,
+			this.x - r.width / 2,
+			this.y - r.height / 2,
 			this.width + r.width,
 			this.height + r.height
-		)
+		);
 
 		const centerX = r.x + r.width / 2;
 		const centerY = r.y + r.height / 2;
-		const ray = new Ray(centerX, centerY, r.vector.moveX , r.vector.moveY);
+		const ray = new Ray(centerX, centerY, r.vector.moveX, r.vector.moveY);
 
 		const collisionInfo = largerRect.rayVsRect(ray);
 		return collisionInfo;
@@ -363,10 +330,7 @@ const init = () => {
 	world.setSize();
 
 	world.addRect(500, 250, 0, 0);
-	world.addRect(500, 500, 0, -1, "yellow");
-
-	// Temporary testing of rayVsRect
-	// window.addEventListener("mousemove", world.onMouseUpdate);
+	world.addRect(500, 400, 0.5, 10, "yellow");
 
 	window.requestAnimationFrame(world.draw);
 
