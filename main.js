@@ -22,8 +22,6 @@ class World {
 		// 	this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
 		// });
 
-		this.findCollisions(this.rects);
-
 		this.rects.forEach((rect) => {
 			rect.updatePos(this.width, this.height);
 			this.ctx.fillStyle = rect.fillColor;
@@ -88,7 +86,46 @@ class World {
 		this.logos.push(new Logo(x, y, moveX, moveY));
 	}.bind(this);
 
-	findCollisions = function (rects) {}.bind(this);
+	/**
+	 * Returns any rects that are colliding
+	 * @param  {Rect[]} rects
+	 * @returns {Rect[]} - an array of rectangles that are colliding
+	 */
+	findCollisions = function (rects) {
+		const sortedByX = this.sortByX(rects);
+		console.log(rects);
+		console.log(sortedByX);
+	}.bind(this);
+
+	/**
+	 * Returns an array of rects sorted by their X coordinate, from lowest to highest.
+	 * @param  {Rect[]} rects
+	 * @returns {Rects[]}
+	 */
+	sortByX = function (rects) {
+		// Base case
+		if (rects.length <= 1) {
+			return rects;
+		}
+
+		// Pivot will be the last element in the array
+		const pivot = rects[0];
+		let left = [],
+			right = [];
+
+		// Check all elements after the pivot.
+		for (let i = 1; i < rects.length; i++) {
+			const rect = rects[i];
+
+			if (rect.x > pivot.x) {
+				right.push(rect);
+			} else {
+				left.push(rect);
+			}
+		}
+
+		return this.sortByX(left).concat([pivot]).concat(this.sortByX(right));
+	}.bind(this);
 
 	getMousePos = function (e) {
 		const rect = this.canvas;
@@ -335,15 +372,19 @@ const init = () => {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 
+	// Add rectangles
 	world.addRect(250, 10, 0, 0, "red");
-	world.addRect(200, 10, 0, 0, "white");
+	world.addRect(200, 10, 0, 0, "red");
 	world.addRect(375, 60, 0, 0, "red");
-	world.addRect(400, 40, 0, 0, "white");
+	world.addRect(400, 40, 0, 0, "red");
 	world.addRect(30, 40, 0, 0, "red");
-	world.addRect(10, 10, 0, 0, "white");
+	world.addRect(10, 10, 0, 0, "red");
 	world.addRect(600, 1, 0, 0, "white");
+	world.addRect(900, 1, 0, 0, "white");
 
 	window.requestAnimationFrame(world.draw);
+
+	world.findCollisions(world.rects);
 	// window.addEventListener("resize", world.setSize);
 	// world.canvas.addEventListener("click", world.addLogo);
 };
