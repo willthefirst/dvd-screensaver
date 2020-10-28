@@ -22,6 +22,10 @@ class World {
 		// 	this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
 		// });
 
+		// Update all rectangle positions
+		// this.rects = this.updatePositions(this.rects);
+
+		// Draw each rectangle onto the canvas
 		this.rects.forEach((rect) => {
 			rect.updatePos(this.width, this.height);
 			this.ctx.fillStyle = rect.fillColor;
@@ -87,48 +91,69 @@ class World {
 	}.bind(this);
 
 	/**
+	 * Updates positions of all ells by checking for collisions and updating vectors accordingly.
+	 * @param  {Object[]} els
+	 * @return {Object[]}
+	 */
+	updatePositions = function (els) {
+		// return findAndResolveCollisions(els);
+	};
+
+	/**
 	 * Returns any rects that are colliding
 	 * @param  {Rect[]} rects
-	 * @returns {Rect[]} - an array of rectangles that are colliding
+	 * @returns {Rect[]} - rects with updated vectors and positions
 	 */
-	findCollisions = function (rects) {
-		// Base case
-		if (rects.length <= 1) {
-			return rects;
-		}
+	findAndResolveCollisions = function (rects) {
+		
+		// if (rects.length <= 1) {
+		// 	return rects;
+		// }
+
+		let rects_ = [];
 
 		// TODO find the highest variance axis (then you can sort on that)
 		const sorted = sortObjectsByKey("x", rects);
 
 		for (let i = 0; i < sorted.length - 1; i++) {
-			const rect = sorted[i];
-			const targetIndex = i + 1;
-			const target = sorted[targetIndex];
+			let testNextTarget = true;
+			let targetIndex = i + 1;
 
-			if (rect.rectVsRect(target)) {
-				this.resolveCollision(rect, target);
+			while (testNextTarget) {
+				const rect = sorted[i];
+				const target = sorted[targetIndex];
 
-				let testNextTarget = true;
-				let j = targetIndex + 1;
-
-				// Check rect against subsequent rects, in the even that there are multiple collisions.
-				while (testNextTarget && j < sorted.length - 1) {
-					const subTarget = sorted[j];
-
-					if (rect.rectVsRect(subTarget)) {
-						this.resolveCollision(rect, subTarget);
-						j++;
-					} else {
-						// Current rectangle does not overlap with any other rectangles, stop checking.
+				if (target.x <= rect.x + rect.width) {
+					if (target.y + target.height >= rect.y && target.y <= rect.y + rect.height) {
+						let newRects = this.resolveCollision(rect, target);
+						sorted[i] = newRects[0];
+						sorted[targetIndex] = newRects[1];
 						testNextTarget = false;
 					}
+					targetIndex++;
+				} else {
+					testNextTarget = false;
 				}
 			}
 		}
+		return sorted;
 	}.bind(this);
 
+	// returns [rect1, rect2]
 	resolveCollision = function (rect1, rect2) {
-		// TODO what do we do once we know about these collisions?
+		if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
+
+			
+			// // If moving in a non-zero direction, switch directions.
+			// if (collisionInfo.cRay.dX !== 0) {
+			// 	movingRect.vector.moveX *= -1;
+			// }
+			// if (collisionInfo.cRay.dY !== 0) {
+			// 	movingRect.vector.moveY *= -collisionInfo.cRay.dY;
+			// }
+		}
+
+
 		console.log(`Collision between ${rect1.fillColor} and ${rect2.fillColor}`);
 	};
 
@@ -379,17 +404,17 @@ const init = () => {
 
 	// Add rectangles
 	world.addRect(10, 10, 0, 0, "#666");
-	world.addRect(30, 40, 0, 0, "#777");
-	world.addRect(50, 10, 0, 0, "#888");
+	world.addRect(30, 10, 0, 0, "#777");
+	world.addRect(50, 200, 0, 0, "#888");
 	world.addRect(250, 10, 0, 0, "#999");
-	world.addRect(375, 60, 0, 0,"#aaa");
+	world.addRect(375, 60, 0, 0, "#aaa");
 	world.addRect(400, 40, 0, 0, "#bbb");
 	world.addRect(600, 1, 0, 0, "#ccc");
 	world.addRect(900, 1, 0, 0, "#ddd");
 
 	window.requestAnimationFrame(world.draw);
 
-	world.findCollisions(world.rects);
+	world.findAndResolveCollisions(world.rects);
 	// window.addEventListener("resize", world.setSize);
 	// world.canvas.addEventListener("click", world.addLogo);
 };
