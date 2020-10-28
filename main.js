@@ -92,23 +92,45 @@ class World {
 	 * @returns {Rect[]} - an array of rectangles that are colliding
 	 */
 	findCollisions = function (rects) {
+		// Base case
+		if (rects.length <= 1) {
+			return rects;
+		}
+
 		// TODO find the highest variance axis (then you can sort on that)
+		const sorted = sortObjectsByKey("x", rects);
 
-		const sortedByX = sortObjectsByKey("x", rects);
-		const sortedByY = sortObjectsByKey("y", rects);
-		
-		// Sort objects by X coordinate.
-			// If obj2_X falls within obj1's x bounds, they *might* be colliding.
-				// If obj2_Y falls in obj2's y bounds, they ARE colliding!
-					// TODO what do we do once we know about these collisions?
-				// Now we have check obj3...X against obj1, since it might also be colliding.
-					// If so, same things as the above TODO
-					// ONCE this fails, we can go back to the beginning of this loop, incrementing to obj2.
-			// Else (obj2 and obj1 are not colliding)
-				// We KNOW that obj3...objX CANNOT be colliding with ob1
-				// Increment (ie. restart the loop) the obj we're checking against (in this case, obj 2).
+		for (let i = 0; i < sorted.length - 1; i++) {
+			const rect = sorted[i];
+			const targetIndex = i + 1;
+			const target = sorted[targetIndex];
 
+			if (rect.rectVsRect(target)) {
+				this.resolveCollision(rect, target);
+
+				let testNextTarget = true;
+				let j = targetIndex + 1;
+
+				// Check rect against subsequent rects, in the even that there are multiple collisions.
+				while (testNextTarget && j < sorted.length - 1) {
+					const subTarget = sorted[j];
+
+					if (rect.rectVsRect(subTarget)) {
+						this.resolveCollision(rect, subTarget);
+						j++;
+					} else {
+						// Current rectangle does not overlap with any other rectangles, stop checking.
+						testNextTarget = false;
+					}
+				}
+			}
+		}
 	}.bind(this);
+
+	resolveCollision = function (rect1, rect2) {
+		// TODO what do we do once we know about these collisions?
+		console.log(`Collision between ${rect1.fillColor} and ${rect2.fillColor}`);
+	};
 
 	getMousePos = function (e) {
 		const rect = this.canvas;
@@ -356,14 +378,14 @@ const init = () => {
 	world.setSize();
 
 	// Add rectangles
-	world.addRect(250, 10, 0, 0, "red");
-	world.addRect(200, 10, 0, 0, "red");
-	world.addRect(375, 60, 0, 0, "red");
-	world.addRect(400, 40, 0, 0, "red");
-	world.addRect(30, 40, 0, 0, "red");
-	world.addRect(10, 10, 0, 0, "red");
-	world.addRect(600, 1, 0, 0, "white");
-	world.addRect(900, 1, 0, 0, "white");
+	world.addRect(10, 10, 0, 0, "#666");
+	world.addRect(30, 40, 0, 0, "#777");
+	world.addRect(50, 10, 0, 0, "#888");
+	world.addRect(250, 10, 0, 0, "#999");
+	world.addRect(375, 60, 0, 0,"#aaa");
+	world.addRect(400, 40, 0, 0, "#bbb");
+	world.addRect(600, 1, 0, 0, "#ccc");
+	world.addRect(900, 1, 0, 0, "#ddd");
 
 	window.requestAnimationFrame(world.draw);
 
