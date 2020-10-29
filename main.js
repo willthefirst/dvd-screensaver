@@ -122,10 +122,12 @@ class World {
 				const collisionInfo = rect.dynamicRectVsRect(target);
 
 				// Detects whether the two rectangles intersect on the X axis
-				if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
-					let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
-					sorted[i] = newRects[0];
-					sorted[targetIndex] = newRects[1];
+				if (collisionInfo.doesIntersect.x && collisionInfo.t < 1) {
+					if (collisionInfo.doesIntersect.y) {
+						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
+						sorted[i] = newRects[0];
+						sorted[targetIndex] = newRects[1];
+					}
 					targetIndex++;
 				} else {
 					testNextTarget = false;
@@ -233,7 +235,7 @@ class Rect extends Point {
 
 	/**
 	 * @typedef {Object} CollisionInfo
-	 * @property {boolean} doesIntersect - True if the ray intersects
+	 * @property {{x: boolean, y: boolean}} doesIntersect - True if the ray intersects
 	 * @property {Ray} cRay - The coordinates (origin) and normal (direction) of the near contact point.
 	 * @property {number} t - Time until contact
 	 */
@@ -245,7 +247,7 @@ class Rect extends Point {
 	 */
 	rayVsRect = function (r) {
 		let collisionInfo = {
-			doesIntersect: false,
+			doesIntersect: { x: false, y: false },
 			cRay: null,
 			t: null
 		};
@@ -271,12 +273,22 @@ class Rect extends Point {
 			tFar.y = tNearY_;
 		}
 
-		// If no intersection, return false
+		const tNearHit = Math.max(tNear.x, tNear.y);
+
+		// If no collision, return false
 		if (tNear.x > tFar.y || tNear.y > tFar.x) {
+
+			// If crossing an axis (but no collision)
+			if (tNearHit < 0) {
+				if (tNear.x > tNear.y) {
+					collisionInfo.doesIntersect.x = true;
+				} else {
+					collisionInfo.doesIntersect.y = true;
+				}
+			}
 			return collisionInfo;
 		}
 
-		const tNearHit = Math.max(tNear.x, tNear.y);
 		const tFarHit = Math.min(tFar.x, tFar.y);
 
 		if (tFarHit < 0) {
@@ -301,10 +313,9 @@ class Rect extends Point {
 			}
 		}
 
-		collisionInfo.doesIntersect = true;
 		collisionInfo.tNearHit = tNearHit;
 		collisionInfo = {
-			doesIntersect: true,
+			doesIntersect: {x: true, y: true},
 			cRay: new Ray(contactPoint.x, contactPoint.y, contactNormal.x, contactNormal.y),
 			t: tNearHit
 		};
@@ -395,10 +406,10 @@ const init = () => {
 	world.setSize();
 
 	// Add rectangles
-	world.addRect(10, 1, 5, 10, "#666");
-	world.addRect(10, 150, 15, 10, "#666");
-	world.addRect(10, 300, 5, 10, "#666");
-	// world.addRect(, 10, 1, 0, "#666");
+	world.addRect(100, 398, 0, 1, "#aaa");
+	world.addRect(100, 300, 0, -1, "#fff");
+	// world.addRect(200, 400, -1, -1, "#ccc");
+	// world.addRect(1, 200 , 1, 0, "#666");
 	// world.addRect(50, 10, 1, 0, "#666");
 
 	// world.addRect(250, 10, 0, 0, "#999");
