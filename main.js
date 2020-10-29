@@ -100,20 +100,16 @@ class World {
 	};
 
 	/**
-	 * Returns any rects that are colliding
+	 * Returns same array of rectangles with collision-adjusted vectors.
 	 * @param  {Rect[]} rects
-	 * @returns {Rect[]} - rects with updated vectors and positions
+	 * @returns {Rect[]} - rects with updated vectors
 	 */
 	findAndResolveCollisions = function (rects) {
-		// if (rects.length <= 1) {
-		// 	return rects;
-		// }
-
-		let rects_ = [];
-
 		// TODO find the highest variance axis (then you can sort on that)
+		//  Sort rects along the X-axis
 		const sorted = sortObjectsByKey("x", rects);
 
+		// Iterate through each object and check for collisions
 		for (let i = 0; i < sorted.length - 1; i++) {
 			let testNextTarget = true;
 			let targetIndex = i + 1;
@@ -122,14 +118,14 @@ class World {
 				const rect = sorted[i];
 				const target = sorted[targetIndex];
 
-				if (target.x - Math.abs(2 * target.vector.moveX) <= rect.x + rect.width) {
-					const collisionInfo = rect.dynamicRectVsRect(target);
-					if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
-						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
-						sorted[i] = newRects[0];
-						sorted[targetIndex] = newRects[1];
-						testNextTarget = false;
-					}
+				// Test collision
+				const collisionInfo = rect.dynamicRectVsRect(target);
+
+				// Detects whether the two rectangles intersect on the X axis
+				if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
+					let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
+					sorted[i] = newRects[0];
+					sorted[targetIndex] = newRects[1];
 					targetIndex++;
 				} else {
 					testNextTarget = false;
@@ -390,7 +386,6 @@ class Logo extends Rect {
 		} else {
 			this.imagePathIndex++;
 		}
-
 		this.setSrc();
 	}
 }
@@ -400,12 +395,11 @@ const init = () => {
 	world.setSize();
 
 	// Add rectangles
-	world.addRect(10, 10, 1, 0, "#666");
-	world.addRect(150, 10, 1, 0, "#666");
-	world.addRect(300, 10, 1, 0, "#666");
+	world.addRect(10, 1, 5, 10, "#666");
+	world.addRect(10, 150, 15, 10, "#666");
+	world.addRect(10, 300, 5, 10, "#666");
 	// world.addRect(, 10, 1, 0, "#666");
 	// world.addRect(50, 10, 1, 0, "#666");
-
 
 	// world.addRect(250, 10, 0, 0, "#999");
 	// world.addRect(375, 60, 0, 0, "#aaa");
