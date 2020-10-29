@@ -23,7 +23,7 @@ class World {
 		// });
 
 		// Update all rectangle positions
-		// this.rects = this.updatePositions(this.rects);
+		this.rects = this.findAndResolveCollisions(this.rects);
 
 		// Draw each rectangle onto the canvas
 		this.rects.forEach((rect) => {
@@ -96,7 +96,7 @@ class World {
 	 * @return {Object[]}
 	 */
 	updatePositions = function (els) {
-		// return findAndResolveCollisions(els);
+		return findAndResolveCollisions(els);
 	};
 
 	/**
@@ -105,7 +105,6 @@ class World {
 	 * @returns {Rect[]} - rects with updated vectors and positions
 	 */
 	findAndResolveCollisions = function (rects) {
-		
 		// if (rects.length <= 1) {
 		// 	return rects;
 		// }
@@ -119,13 +118,14 @@ class World {
 			let testNextTarget = true;
 			let targetIndex = i + 1;
 
-			while (testNextTarget) {
+			while (testNextTarget && targetIndex < sorted.length) {
 				const rect = sorted[i];
 				const target = sorted[targetIndex];
 
-				if (target.x <= rect.x + rect.width) {
-					if (target.y + target.height >= rect.y && target.y <= rect.y + rect.height) {
-						let newRects = this.resolveCollision(rect, target);
+				if (target.x - Math.abs(2 * target.vector.moveX) <= rect.x + rect.width) {
+					const collisionInfo = rect.dynamicRectVsRect(target);
+					if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
+						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
 						sorted[i] = newRects[0];
 						sorted[targetIndex] = newRects[1];
 						testNextTarget = false;
@@ -140,21 +140,18 @@ class World {
 	}.bind(this);
 
 	// returns [rect1, rect2]
-	resolveCollision = function (rect1, rect2) {
-		if (collisionInfo.doesIntersect && collisionInfo.t < 1) {
-
-			
-			// // If moving in a non-zero direction, switch directions.
-			// if (collisionInfo.cRay.dX !== 0) {
-			// 	movingRect.vector.moveX *= -1;
-			// }
-			// if (collisionInfo.cRay.dY !== 0) {
-			// 	movingRect.vector.moveY *= -collisionInfo.cRay.dY;
-			// }
+	resolveCollision = function (rect1, rect2, cRay) {
+		// If moving in a non-zero direction, switch directions.
+		if (cRay.dX !== 0) {
+			rect1.vector.moveX *= -1;
+			rect2.vector.moveX *= -1;
+		}
+		if (cRay.dY !== 0) {
+			rect1.vector.moveY *= -1;
+			rect2.vector.moveY *= -1;
 		}
 
-
-		console.log(`Collision between ${rect1.fillColor} and ${rect2.fillColor}`);
+		return [rect1, rect2];
 	};
 
 	getMousePos = function (e) {
@@ -403,14 +400,18 @@ const init = () => {
 	world.setSize();
 
 	// Add rectangles
-	world.addRect(10, 10, 0, 0, "#666");
-	world.addRect(30, 10, 0, 0, "#777");
-	world.addRect(50, 200, 0, 0, "#888");
-	world.addRect(250, 10, 0, 0, "#999");
-	world.addRect(375, 60, 0, 0, "#aaa");
-	world.addRect(400, 40, 0, 0, "#bbb");
-	world.addRect(600, 1, 0, 0, "#ccc");
-	world.addRect(900, 1, 0, 0, "#ddd");
+	world.addRect(10, 10, 1, 0, "#666");
+	world.addRect(150, 10, 1, 0, "#666");
+	world.addRect(300, 10, 1, 0, "#666");
+	// world.addRect(, 10, 1, 0, "#666");
+	// world.addRect(50, 10, 1, 0, "#666");
+
+
+	// world.addRect(250, 10, 0, 0, "#999");
+	// world.addRect(375, 60, 0, 0, "#aaa");
+	// world.addRect(400, 40, 0, 0, "#bbb");
+	// world.addRect(600, 1, 0, 0, "#ccc");
+	// world.addRect(900, 1, 0, 0, "#ddd");
 
 	window.requestAnimationFrame(world.draw);
 
