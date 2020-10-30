@@ -169,6 +169,8 @@ class World {
 				}
 			}
 		}
+
+
 		return [rect, target];
 	};
 
@@ -314,6 +316,10 @@ class Rect extends Point {
 			return collisionInfo;
 		}
 
+		if (tNearHit < 0) {
+			return collisionInfo;
+		}
+
 		const contactPoint = new Point(r.x + tNearHit * r.dX, r.y + tNearHit * r.dY);
 
 		let contactNormal;
@@ -427,15 +433,16 @@ const init = () => {
 	world.setSize();
 
 	// Add rectangles
-	world.addRect(100, 150, 10, 10, "#fff");
-	world.addRect(100, 300, 10, -10, "#aaa");
-	world.addRect(200, 400, -10, -10 , "#ccc");
+	world.addRect(100, 100, -2, -2, "red");
+	// world.addRect(100, 100, 0, 1, "#aaa");
+	world.addRect(201, 100, -2, -2 , "blue");
 	// world.addRect(1, 200 , 1, 0, "#666");
-	// world.addRect(50, 10, 1, 0, "#666");
-˝
-	// world.addRect(250, 10, 0, 0, "#999");
-	// world.addRect(375, 60, 0, 0, "#aaa");
-	// world.addRect(400, 40, 0, 0, "#bbb");
+	world.addRect(302, 100, -2, -2, "yellow");
+	// world.addRect(403, 100, -2, -2, "green");
+	
+	// world.addRect(250, 10, -2, 2, "#999");
+	// world.addRect(375, 60, 2, 0, "#aaa");
+	// world.addRect(400, 40, 0, -2, "#bbb");
 	// world.addRect(600, 1, 0, 0, "#ccc");
 	// world.addRect(900, 1, 0, 0, "#ddd");
 
@@ -480,7 +487,7 @@ function sortObjectsByKey(key, objects) {
 	for (let i = 1; i < objects.length; i++) {
 		const object = objects[i];
 
-		if (object[key] > pivot[key]) {
+		if (object[key] >= pivot[key]) {
 			right.push(object);
 		} else {
 			left.push(object);
