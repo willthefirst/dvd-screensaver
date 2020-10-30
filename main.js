@@ -138,18 +138,38 @@ class World {
 	}.bind(this);
 
 	// returns [rect1, rect2]
-	resolveCollision = function (rect1, rect2, cRay) {
+	resolveCollision = function (rect, target, cRay) {
 		// If moving in a non-zero direction, switch directions.
 		if (cRay.dX !== 0) {
-			rect1.vector.moveX *= -1;
-			rect2.vector.moveX *= -1;
+			if ((rect.vector.moveX < 0) !== (target.vector.moveX < 0)) {
+				// Opposite directions
+				rect.vector.moveX *= -1;
+				target.vector.moveX *= -1 ;
+			} else {
+				// Same direction
+				if (Math.abs(rect.vector.moveX) > Math.abs(target.vector.moveX)) {
+					rect.vector.moveX *= -1;
+				} else {
+					target.vector.moveX *= -1;
+				}
+			}
 		}
+		// Up/down collision
 		if (cRay.dY !== 0) {
-			rect1.vector.moveY *= -1;
-			rect2.vector.moveY *= -1;
+			if ((rect.vector.moveY < 0) !== (target.vector.moveY < 0)) {
+				// Opposite directions
+				rect.vector.moveY *= -1;
+				target.vector.moveY *= -1 ;
+			} else { 
+				// Same direction
+				if (Math.abs(rect.vector.moveY) > Math.abs(target.vector.moveY)) {
+					rect.vector.moveY *= -1;
+				} else {
+					target.vector.moveY *= -1;
+				}
+			}
 		}
-
-		return [rect1, rect2];
+		return [rect, target];
 	};
 
 	getMousePos = function (e) {
@@ -277,7 +297,6 @@ class Rect extends Point {
 
 		// If no collision, return false
 		if (tNear.x > tFar.y || tNear.y > tFar.x) {
-
 			// If crossing an axis (but no collision)
 			if (tNearHit < 0) {
 				if (tNear.x > tNear.y) {
@@ -315,7 +334,7 @@ class Rect extends Point {
 
 		collisionInfo.tNearHit = tNearHit;
 		collisionInfo = {
-			doesIntersect: {x: true, y: true},
+			doesIntersect: { x: true, y: true },
 			cRay: new Ray(contactPoint.x, contactPoint.y, contactNormal.x, contactNormal.y),
 			t: tNearHit
 		};
@@ -328,6 +347,8 @@ class Rect extends Point {
 	 * @returns {CollisionInfo} collisionInfo
 	 */
 	dynamicRectVsRect = function (r) {
+		// this = gray rect --> gets larger rectangle
+		// r = white rectangle --> we draw the ray from this
 		const largerRect = new Rect(
 			this.x - r.width / 2,
 			this.y - r.height / 2,
@@ -337,7 +358,7 @@ class Rect extends Point {
 
 		const centerX = r.x + r.width / 2;
 		const centerY = r.y + r.height / 2;
-		const ray = new Ray(centerX, centerY, r.vector.moveX, r.vector.moveY);
+		const ray = new Ray(centerX, centerY, (r.vector.moveX - this.vector.moveX), (r.vector.moveY - this.vector.moveY));
 
 		const collisionInfo = largerRect.rayVsRect(ray);
 		return collisionInfo;
@@ -406,12 +427,12 @@ const init = () => {
 	world.setSize();
 
 	// Add rectangles
-	world.addRect(100, 398, 0, 1, "#aaa");
-	world.addRect(100, 300, 0, -1, "#fff");
-	// world.addRect(200, 400, -1, -1, "#ccc");
+	world.addRect(100, 150, 10, 10, "#fff");
+	world.addRect(100, 300, 10, -10, "#aaa");
+	world.addRect(200, 400, -10, -10 , "#ccc");
 	// world.addRect(1, 200 , 1, 0, "#666");
 	// world.addRect(50, 10, 1, 0, "#666");
-
+˝
 	// world.addRect(250, 10, 0, 0, "#999");
 	// world.addRect(375, 60, 0, 0, "#aaa");
 	// world.addRect(400, 40, 0, 0, "#bbb");
