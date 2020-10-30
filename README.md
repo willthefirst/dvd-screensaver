@@ -1,8 +1,6 @@
 # DVD Screensaver
 
-Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) we all know and love.
-Big thanks to [@adeshar00](https://github.com/adeshar00) for helping me think through collision detection.
-Built during my time at [Recurse Center](https://www.recurse.com)
+Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) we all know and love.  
 
 ## Development
 
@@ -23,3 +21,6 @@ Built during my time at [Recurse Center](https://www.recurse.com)
 ## Maybe later
 - [ ] Give an option to hit the corner every time.
 - [ ] Maybe rebuild this in Elm?
+
+Big thanks to [@adeshar00](https://github.com/adeshar00) for helping me think through collision detection.  
+Built during my time at [Recurse Center](https://www.recurse.com)
