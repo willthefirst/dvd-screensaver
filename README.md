@@ -14,6 +14,7 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
     - [ ] Resize logos so this works on phones.
     - [ ] Add some nicer docs.
     - [ ] Potentially some sort of currying method on `Point` to make working points a bit easier in places?
+    - [ ] For the `Rect` class, renam `.vector` to `.dir` and make vector a computer prop from `.dir * .vel`
     - [ ] Why does the whole program slow down over time?
 - [x] Implement collision detection working off of [this tutorial] (https://youtu.be/8JJ-4JgR7Dg?t=2003)
     - [x] Get collision vector working perfectly with a ray coming from any angle.

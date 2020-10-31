@@ -24,7 +24,7 @@ class World {
 		this.drawCanvas();
 		window.requestAnimationFrame(this.nextFrame);
 	}.bind(this);
-	 
+
 	/**
 	 *
 	 * View methods, for drawing to the canvas
@@ -73,14 +73,22 @@ class World {
 		];
 	}
 
-	addLogo = function (x, y, moveX, moveY) {
-		this.logos.push(new Logo(x, y, moveX, moveY));
+	addLogo = function (x, y, moveX, moveY, vel) {
+		this.logos.push(new Logo(x, y, moveX, moveY, vel));
 	}.bind(this);
+
+	addLogoAtCenter = function () {
+		// Add logo
+		const dir = getRandomVector();
+		const centerX = this.width / 2 - 110 / 2;
+		const centerY = this.height / 2 - 75 / 2;
+		this.addLogo(centerX, centerY, dir.x, dir.y, this.speed);
+	};
 
 	addLogoAtMousePos = function () {
 		const mouse = this.mousePos;
-		const dir = getRandomVector(this.speed);
-		this.addLogo(mouse.x, mouse.y, dir.x, dir.y);
+		const dir = getRandomVector();
+		this.addLogo(mouse.x, mouse.y, dir.x, dir.y, this.speed);
 	}.bind(this);
 
 	updatePositions() {
@@ -202,17 +210,17 @@ class World {
 	// Event handlers
 	onResize = function (e) {
 		const v = this.speed;
-		this.setSize;
+		this.setSize();
 		this.logos = [];
-		this.addLogo(1, 1, v, v);
+		this.addLogoAtCenter();
 	}.bind(this);
 
-	onSpeedChange = function(e) {
-		this.speed = e.target.value;
+	onSpeedChange = function (e) {
+		this.speed = parseInt(e.target.value);
 		this.logos = this.logos.map((logo) => {
 			logo.vel = this.speed;
 			return logo;
-		})
+		});
 	}.bind(this);
 
 	onMousedown = function (e) {
@@ -469,8 +477,8 @@ class Logo extends Rect {
 	 * @param  {number} moveX
 	 * @param  {number} moveY
 	 */
-	constructor(xCoor, yCoor, moveX, moveY) {
-		super(xCoor, yCoor, 110, 75, moveX, moveY);
+	constructor(xCoor, yCoor, moveX, moveY, vel) {
+		super(xCoor, yCoor, 110, 75, moveX, moveY, vel);
 		this.image = new Image();
 		this.imagePaths = [
 			"images/dvd-logo-white.svg",
@@ -542,9 +550,9 @@ function sortObjectsByKey(key, objects) {
 	return sortObjectsByKey(key, left).concat([pivot]).concat(sortObjectsByKey(key, right));
 }
 
-function getRandomVector(speed) {
-	const hyp = Math.sqrt(2 * Math.pow(speed, 2));
-	const x = Math.random() * speed;
+function getRandomVector() {
+	const hyp = Math.sqrt(2);
+	const x = Math.random();
 	const y = Math.sqrt(hyp - Math.sqrt(x, 2));
 	return new Point(posOrNeg(x), posOrNeg(y));
 }
@@ -558,15 +566,10 @@ function getRandomVector(speed) {
 (function () {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
-
-	// Add logos
-	const dir = getRandomVector(world.speed);
-	const centerX = world.width / 2 - 110 / 2;
-	const centerY = world.height / 2 - 75 / 2;
-	world.addLogo(centerX, centerY, dir.x, dir.y);
-
+	world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
 
+	// Event listeners
 	window.addEventListener("resize", world.onResize);
 	world.canvas.addEventListener("mousedown", world.onMousedown);
 	world.canvas.addEventListener("mousemove", world.onMousemove);
