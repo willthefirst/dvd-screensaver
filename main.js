@@ -6,6 +6,7 @@ class World {
 		this.logos = [];
 		this.height = 600;
 		this.width = 900;
+		this.speed = 10;
 		this.mousePos = { x: 0, y: 0 };
 		this.cursorRay = new Ray(0, 0, 0, 0);
 		this.collisionRay = new Ray(0, 0, 0, 0);
@@ -27,7 +28,7 @@ class World {
 	 * View methods, for drawing to the canvas
 	 *
 	 */
-	drawCanvas = function () {
+	drawCanvas () {
 		// Clear the canvas
 		this.ctx.clearRect(0, 0, this.width, this.height);
 		this.drawBackground();
@@ -35,14 +36,14 @@ class World {
 		this.logos.forEach((logo) => {
 			this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
 		});
-	}.bind(this);
+	}
 
-	drawBackground = function () {
+	drawBackground () {
 		this.ctx.fillStyle = "#000";
 		this.ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
 		this.ctx.fillRect(0, 0, this.width, this.height);
 		this.ctx.save();
-	}.bind(this);
+	}
 
 	/**
 	 *
@@ -50,38 +51,31 @@ class World {
 	 * Model methods, for updating the World's model
 	 *
 	 */
-	setSize = function () {
-		// This prevents the "offscreen" bug;
-		this.logos.forEach((logo) => {
-			logo.x = 1;
-			logo.y = 1;
-		});
-
+	setSize () {
 		const w = window.innerWidth;
 		const h = window.innerHeight;
 
+		// Set up dimensions
 		this.width = w;
 		this.height = h;
-
 		this.canvas.setAttribute("width", `${w}px`);
 		this.canvas.setAttribute("height", `${h}px`);
 
 		// Add boundaries to the four sides of the window
 		const pad = 200;
-
 		this.walls = [
 			new Rect(0, -pad, w, pad), // top
 			new Rect(w, 0, pad, h), // right
 			new Rect(0, h, w, pad), // bottom
 			new Rect(-pad, 0, pad, h) // left
 		];
-	}.bind(this);
+	}
 
-	addLogo = function (x, y, moveX, moveY) {
+	addLogo (x, y, moveX, moveY) {
 		this.logos.push(new Logo(x, y, moveX, moveY));
-	}.bind(this);
+	}
 
-	updatePositions = function () {
+	updatePositions () {
 		// Resolve collisions between logos and walls
 		this.logos = this.findAndResolveCollisions(this.logos, this.walls);
 
@@ -90,7 +84,7 @@ class World {
 			logo.updatePos();
 			return logo;
 		});
-	}.bind(this);
+	}
 
 	/**
 	 * Returns an updated array of rectangles with collision-adjusted vectors.
@@ -98,7 +92,7 @@ class World {
 	 * @param {Rect[]} walls - The boundaries of our world
 	 * @returns {Rect[]} - rects with updated vectors
 	 */
-	findAndResolveCollisions = function (rects, walls) {
+	findAndResolveCollisions (rects, walls) {
 		// TODO find the highest variance axis (then you can sort on that)
 		//  Sort rects along the X-axis
 		const sorted = sortObjectsByKey("x", rects);
@@ -108,11 +102,12 @@ class World {
 			const rect = sorted[i];
 
 			// Check rectangle vs. wall collisions (so things don't fly out of bounds)
-			this.walls.forEach((wall) => {
+			walls.forEach((wall) => {
 				const test = wall.dynamicRectVsRect(rect);
 
 				if (test.doesIntersect.x && test.doesIntersect.y && test.t < 1) {
 					const rectAndWall = this.resolveCollision(rect, wall, test.cRay);
+					rectAndWall[0].updateColor();
 					sorted[i] = rectAndWall[0];
 				}
 			});
@@ -144,7 +139,7 @@ class World {
 			}
 		}
 		return sorted;
-	}.bind(this);
+	}
 
 	/**
 	 * Returns rects with updated vectors after collision
@@ -188,13 +183,13 @@ class World {
 		return [rect, target];
 	};
 
-	getMousePos = function (e) {
+	getMousePos (e) {
 		const rect = this.canvas;
 		return {
 			x: e.clientX - rect.clientLeft,
 			y: e.clientY - rect.clientTop
 		};
-	}.bind(this);
+	}
 }
 
 /**
@@ -268,22 +263,22 @@ class Rect extends Point {
 	 * @param  {Point} p
 	 * @returns {boolean}
 	 */
-	pointVsRect = function (p) {
+	pointVsRect (p) {
 		const isInsideX = p.x >= this.x && p.x <= this.x + this.width;
 		const isInsideY = p.y >= this.y && p.y <= this.y + this.height;
 		return isInsideX && isInsideY;
-	}.bind(this);
+	}
 
 	/**
 	 * Determines if a rectangle overlaps this rectangle.
 	 * @param  {Rect} r
 	 * @returns {boolean}
 	 */
-	rectVsRect = function (r) {
+	rectVsRect (r) {
 		const isInsideX = this.x <= r.x + r.width && this.x + this.width >= r.x;
 		const isInsideY = this.y <= r.y + r.height && this.y + this.height >= r.y;
 		return isInsideX && isInsideY;
-	}.bind(this);
+	}
 
 	/**
 	 * @typedef {Object} CollisionInfo
@@ -297,7 +292,7 @@ class Rect extends Point {
 	 * @param  {Ray} r
 	 * @returns {CollisionInfo} collisionInfo - Object containing information about possible intersection.
 	 */
-	rayVsRect = function (r) {
+	rayVsRect (r) {
 		let collisionInfo = {
 			doesIntersect: { x: false, y: false },
 			cRay: null,
@@ -382,7 +377,7 @@ class Rect extends Point {
 	 * @param  {Rect} r - The moving rectangle
 	 * @returns {CollisionInfo} collisionInfo
 	 */
-	dynamicRectVsRect = function (r) {
+	dynamicRectVsRect (r) {
 		// this = gray rect --> gets larger rectangle
 		// r = white rectangle --> we draw the ray from this
 		const largerRect = new Rect(
@@ -403,18 +398,18 @@ class Rect extends Point {
 
 		const collisionInfo = largerRect.rayVsRect(ray);
 		return collisionInfo;
-	}.bind(this);
+	}
 
-	updatePos = function () {
+	updatePos () {
 		// Move logo along its vector
 		this.x += this.vector.moveX;
 		this.y += this.vector.moveY;
-	}.bind(this);
+	}
 
-	updateColor = function () {
+	updateColor () {
 		const colors = ["red", "green", "blue", "yellow", "pink"];
 		this.fillColor = colors[Math.floor(Math.random() * colors.length)];
-	}.bind(this);
+	}
 }
 
 /**
@@ -512,12 +507,16 @@ function sortObjectsByKey(key, objects) {
 	world.setSize();
 
 	// Add logos
-	const v = 10;
-	world.addLogo(100, 100, -v, -v);
-	world.addLogo(250, 100, -v, -v);
-	world.addLogo(400, 100, -v, v);
+	const v = world.speed;
+	world.addLogo(1, 1, v, v);
 
 	window.requestAnimationFrame(world.nextFrame);
-	window.addEventListener("resize", world.setSize);
+	window.addEventListener("resize", () => {
+		const v = world.speed;
+		// On resize, banish all logos and restart
+		world.setSize;
+		world.logos = [];
+		world.addLogo(1, 1, world.speed, world.speed);
+	});
 	// world.canvas.addEventListener("click", world.addLogo);
 })();
