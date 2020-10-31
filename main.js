@@ -132,6 +132,8 @@ class World {
 				if (collisionInfo.doesIntersect.x && collisionInfo.t < 1) {
 					if (collisionInfo.doesIntersect.y) {
 						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
+						newRects[0].updateColor();
+						newRects[1].updateColor();
 						sorted[i] = newRects[0];
 						sorted[targetIndex] = newRects[1];
 					}
@@ -202,7 +204,7 @@ class World {
  *
  */
 
-/** 
+/**
  * Class representing a point.
  * @class Point
  */
@@ -216,7 +218,7 @@ class Point {
 	}
 }
 
-/** 
+/**
  * Class representing ray.
  * @class
  */
@@ -235,7 +237,7 @@ class Ray extends Point {
 	}
 }
 
-/** 
+/**
  * Class representing rectangle.
  * @extends Point
  */
@@ -403,14 +405,19 @@ class Rect extends Point {
 		return collisionInfo;
 	}.bind(this);
 
-	updatePos() {
+	updatePos = function () {
 		// Move logo along its vector
 		this.x += this.vector.moveX;
 		this.y += this.vector.moveY;
-	}
+	}.bind(this);
+
+	updateColor = function () {
+		const colors = ["red", "green", "blue", "yellow", "pink"];
+		this.fillColor = colors[Math.floor(Math.random() * colors.length)];
+	}.bind(this);
 }
 
-/** 
+/**
  * Class representing a DVD logo.
  * @extends Rect
  */
@@ -438,7 +445,7 @@ class Logo extends Rect {
 		this.image.src = this.imagePaths[this.imagePathIndex];
 	}
 
-	nextColor() {
+	updateColor() {
 		if (this.imagePathIndex === this.imagePaths.length - 1) {
 			this.imagePathIndex = 0;
 		} else {
