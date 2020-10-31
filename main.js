@@ -24,7 +24,7 @@ class World {
 		this.drawCanvas();
 		window.requestAnimationFrame(this.nextFrame);
 	}.bind(this);
-
+	 
 	/**
 	 *
 	 * View methods, for drawing to the canvas
@@ -207,6 +207,14 @@ class World {
 		this.addLogo(1, 1, v, v);
 	}.bind(this);
 
+	onSpeedChange = function(e) {
+		this.speed = e.target.value;
+		this.logos = this.logos.map((logo) => {
+			logo.vel = this.speed;
+			return logo;
+		})
+	}.bind(this);
+
 	onMousedown = function (e) {
 		this.isMouseDown = true;
 		this.mousePos = this.getMousePos(e);
@@ -279,14 +287,16 @@ class Rect extends Point {
 	 * @param  {number} yCoor
 	 * @param  {number} width
 	 * @param  {number} height
+	 * @param  {number} vel
 	 * @param  {number} moveX
 	 * @param  {number} moveY
 	 * @param {string} fillColor
 	 */
-	constructor(xCoor, yCoor, width, height, moveX = 0, moveY = 0, fillColor = "#fff") {
+	constructor(xCoor, yCoor, width, height, moveX = 0, moveY = 0, vel = 1, fillColor = "#fff") {
 		super(xCoor, yCoor);
 		this.width = width;
 		this.height = height;
+		this.vel = vel;
 		this.vector = {
 			moveX: moveX,
 			moveY: moveY
@@ -428,8 +438,8 @@ class Rect extends Point {
 		const ray = new Ray(
 			centerX,
 			centerY,
-			r.vector.moveX - this.vector.moveX,
-			r.vector.moveY - this.vector.moveY
+			r.vector.moveX * r.vel - this.vector.moveX * this.vel,
+			r.vector.moveY * r.vel - this.vector.moveY * this.vel
 		);
 
 		const collisionInfo = largerRect.rayVsRect(ray);
@@ -438,8 +448,8 @@ class Rect extends Point {
 
 	updatePos() {
 		// Move logo along its vector
-		this.x += this.vector.moveX;
-		this.y += this.vector.moveY;
+		this.x += this.vector.moveX * this.vel;
+		this.y += this.vector.moveY * this.vel;
 	}
 
 	updateColor() {
@@ -551,8 +561,8 @@ function getRandomVector(speed) {
 
 	// Add logos
 	const dir = getRandomVector(world.speed);
-	const centerX = world.width / 2 - 110 / 2
-	const centerY = world.height / 2 - 75 / 2
+	const centerX = world.width / 2 - 110 / 2;
+	const centerY = world.height / 2 - 75 / 2;
 	world.addLogo(centerX, centerY, dir.x, dir.y);
 
 	window.requestAnimationFrame(world.nextFrame);
@@ -561,4 +571,5 @@ function getRandomVector(speed) {
 	world.canvas.addEventListener("mousedown", world.onMousedown);
 	world.canvas.addEventListener("mousemove", world.onMousemove);
 	world.canvas.addEventListener("mouseup", world.onMouseup);
+	document.getElementById("dvd-screensaver-speed").addEventListener("input", world.onSpeedChange);
 })();
