@@ -22,6 +22,7 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
     - [x] Get two rectangles to bounce off of one another using sort and sweep.
 
 ## Maybe later
+- [ ] Would be nice to really make collision detection work :(˝
 - [ ] Give an option to hit the corner every time.
 - [ ] Maybe rebuild this in Elm?
 

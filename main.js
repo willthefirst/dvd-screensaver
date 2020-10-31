@@ -6,10 +6,12 @@ class World {
 		this.logos = [];
 		this.height = 600;
 		this.width = 900;
-		this.speed = 10;
+		this.speed = 1;
 		this.mousePos = { x: 0, y: 0 };
 		this.cursorRay = new Ray(0, 0, 0, 0);
 		this.collisionRay = new Ray(0, 0, 0, 0);
+		this.isMouseDown = false;
+		this.makeItRain;
 	}
 
 	/**
@@ -28,7 +30,7 @@ class World {
 	 * View methods, for drawing to the canvas
 	 *
 	 */
-	drawCanvas () {
+	drawCanvas() {
 		// Clear the canvas
 		this.ctx.clearRect(0, 0, this.width, this.height);
 		this.drawBackground();
@@ -38,7 +40,7 @@ class World {
 		});
 	}
 
-	drawBackground () {
+	drawBackground() {
 		this.ctx.fillStyle = "#000";
 		this.ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
 		this.ctx.fillRect(0, 0, this.width, this.height);
@@ -51,7 +53,7 @@ class World {
 	 * Model methods, for updating the World's model
 	 *
 	 */
-	setSize () {
+	setSize() {
 		const w = window.innerWidth;
 		const h = window.innerHeight;
 
@@ -71,11 +73,17 @@ class World {
 		];
 	}
 
-	addLogo (x, y, moveX, moveY) {
+	addLogo = function (x, y, moveX, moveY) {
 		this.logos.push(new Logo(x, y, moveX, moveY));
-	}
+	}.bind(this);
 
-	updatePositions () {
+	addLogoAtMousePos = function () {
+		const mouse = this.mousePos;
+		const dir = getRandomVector(this.speed);
+		this.addLogo(mouse.x, mouse.y, dir.x, dir.y);
+	}.bind(this);
+
+	updatePositions() {
 		// Resolve collisions between logos and walls
 		this.logos = this.findAndResolveCollisions(this.logos, this.walls);
 
@@ -92,7 +100,7 @@ class World {
 	 * @param {Rect[]} walls - The boundaries of our world
 	 * @returns {Rect[]} - rects with updated vectors
 	 */
-	findAndResolveCollisions (rects, walls) {
+	findAndResolveCollisions(rects, walls) {
 		// TODO find the highest variance axis (then you can sort on that)
 		//  Sort rects along the X-axis
 		const sorted = sortObjectsByKey("x", rects);
@@ -183,13 +191,41 @@ class World {
 		return [rect, target];
 	};
 
-	getMousePos (e) {
+	getMousePos(e) {
 		const rect = this.canvas;
 		return {
 			x: e.clientX - rect.clientLeft,
 			y: e.clientY - rect.clientTop
 		};
 	}
+
+	// Event handlers
+	onResize = function (e) {
+		const v = this.speed;
+		this.setSize;
+		this.logos = [];
+		this.addLogo(1, 1, v, v);
+	}.bind(this);
+
+	onMousedown = function (e) {
+		this.isMouseDown = true;
+		this.mousePos = this.getMousePos(e);
+		this.addLogoAtMousePos();
+		this.makeItRain = window.setInterval(this.addLogoAtMousePos, 90);
+		window.addEventListener("mouseMove", this.onMousemove);
+	}.bind(this);
+
+	onMousemove = function (e) {
+		if (this.isMouseDown) {
+			this.mousePos = this.getMousePos(e);
+		}
+	}.bind(this);
+
+	onMouseup = function (e) {
+		this.isMouseDown = false;
+		clearInterval(this.makeItRain);
+		window.removeEventListener("mousemove", this.onMousemove);
+	}.bind(this);
 }
 
 /**
@@ -263,7 +299,7 @@ class Rect extends Point {
 	 * @param  {Point} p
 	 * @returns {boolean}
 	 */
-	pointVsRect (p) {
+	pointVsRect(p) {
 		const isInsideX = p.x >= this.x && p.x <= this.x + this.width;
 		const isInsideY = p.y >= this.y && p.y <= this.y + this.height;
 		return isInsideX && isInsideY;
@@ -274,7 +310,7 @@ class Rect extends Point {
 	 * @param  {Rect} r
 	 * @returns {boolean}
 	 */
-	rectVsRect (r) {
+	rectVsRect(r) {
 		const isInsideX = this.x <= r.x + r.width && this.x + this.width >= r.x;
 		const isInsideY = this.y <= r.y + r.height && this.y + this.height >= r.y;
 		return isInsideX && isInsideY;
@@ -292,7 +328,7 @@ class Rect extends Point {
 	 * @param  {Ray} r
 	 * @returns {CollisionInfo} collisionInfo - Object containing information about possible intersection.
 	 */
-	rayVsRect (r) {
+	rayVsRect(r) {
 		let collisionInfo = {
 			doesIntersect: { x: false, y: false },
 			cRay: null,
@@ -370,14 +406,14 @@ class Rect extends Point {
 			t: tNearHit
 		};
 		return collisionInfo;
-	};
+	}
 
 	/**
 	 * Determines if a moving rectangle intersects this rectangle
 	 * @param  {Rect} r - The moving rectangle
 	 * @returns {CollisionInfo} collisionInfo
 	 */
-	dynamicRectVsRect (r) {
+	dynamicRectVsRect(r) {
 		// this = gray rect --> gets larger rectangle
 		// r = white rectangle --> we draw the ray from this
 		const largerRect = new Rect(
@@ -400,13 +436,13 @@ class Rect extends Point {
 		return collisionInfo;
 	}
 
-	updatePos () {
+	updatePos() {
 		// Move logo along its vector
 		this.x += this.vector.moveX;
 		this.y += this.vector.moveY;
 	}
 
-	updateColor () {
+	updateColor() {
 		const colors = ["red", "green", "blue", "yellow", "pink"];
 		this.fillColor = colors[Math.floor(Math.random() * colors.length)];
 	}
@@ -496,6 +532,13 @@ function sortObjectsByKey(key, objects) {
 	return sortObjectsByKey(key, left).concat([pivot]).concat(sortObjectsByKey(key, right));
 }
 
+function getRandomVector(speed) {
+	const hyp = Math.sqrt(2 * Math.pow(speed, 2));
+	const x = Math.random() * speed;
+	const y = Math.sqrt(hyp - Math.sqrt(x, 2));
+	return new Point(posOrNeg(x), posOrNeg(y));
+}
+
 /**
  *
  *
@@ -507,16 +550,15 @@ function sortObjectsByKey(key, objects) {
 	world.setSize();
 
 	// Add logos
-	const v = world.speed;
-	world.addLogo(1, 1, v, v);
+	const dir = getRandomVector(world.speed);
+	const centerX = world.width / 2 - 110 / 2
+	const centerY = world.height / 2 - 75 / 2
+	world.addLogo(centerX, centerY, dir.x, dir.y);
 
 	window.requestAnimationFrame(world.nextFrame);
-	window.addEventListener("resize", () => {
-		const v = world.speed;
-		// On resize, banish all logos and restart
-		world.setSize;
-		world.logos = [];
-		world.addLogo(1, 1, world.speed, world.speed);
-	});
-	// world.canvas.addEventListener("click", world.addLogo);
+
+	window.addEventListener("resize", world.onResize);
+	world.canvas.addEventListener("mousedown", world.onMousedown);
+	world.canvas.addEventListener("mousemove", world.onMousemove);
+	world.canvas.addEventListener("mouseup", world.onMouseup);
 })();
