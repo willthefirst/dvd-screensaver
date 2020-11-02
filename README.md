@@ -9,8 +9,8 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 ## Todo
 
 - Refactor
-    - [ ] All images load immediately
-    - [ ] Overflow hidden
+    - [x] All images load immediately
+    - [x] Overflow hidden/improve on mobile
     - [x] Should we use the same code to make a dynamic rectangle bounce off of the walls? Then we could remove the offscreen bug section.
     - [ ] Determine highest variance axis.
     - [ ] Resize logos so this works on phones.
