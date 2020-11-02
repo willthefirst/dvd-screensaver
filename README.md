@@ -9,15 +9,14 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 ## Todo
 
 - Refactor
-    - [x] All images load immediately
-    - [x] Overflow hidden/improve on mobile
-    - [x] Should we use the same code to make a dynamic rectangle bounce off of the walls? Then we could remove the offscreen bug section.
     - [ ] Determine highest variance axis.
-    - [ ] Resize logos so this works on phones.
     - [ ] Add some nicer docs.
     - [ ] Potentially some sort of currying method on `Point` to make working points a bit easier in places?
     - [ ] For the `Rect` class, renam `.vector` to `.dir` and make vector a computer prop from `.dir * .vel`
     - [ ] Why does the whole program slow down over time?
+    - [x] All images load immediately
+    - [x] Overflow hidden/improve on mobile
+    - [x] Should we use the same code to make a dynamic rectangle bounce off of the walls? Then we could remove the offscreen bug section.
 - [x] Implement collision detection working off of [this tutorial] (https://youtu.be/8JJ-4JgR7Dg?t=2003)
     - [x] Get collision vector working perfectly with a ray coming from any angle.
     - [x] Get a dynamic rectangle to bounce correctly off of a static rectangle?
