@@ -564,6 +564,12 @@ function getRandomVector() {
  *
  */
 (function () {
+	// Pre-load all images
+	let imagePaths = new Logo().imagePaths
+	imagePaths.forEach((path) => {
+		new Image().src = path;
+	});
+
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 	world.addLogoAtCenter();
