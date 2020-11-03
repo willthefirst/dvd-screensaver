@@ -12,6 +12,7 @@ class World {
 		this.ctx = this.canvas.getContext("2d");
 		this.walls = [];
 		this.logos = [];
+		this.rectangles = [];
 		this.height = 600;
 		this.width = 900;
 		this.speed = 2;
@@ -44,9 +45,15 @@ class World {
 		// Clear the canvas
 		this.ctx.clearRect(0, 0, this.width, this.height);
 		this.drawBackground();
-		// Draw each rectangle onto the canvas
+
+		// Draw each logo onto the canvas
 		this.logos.forEach((logo) => {
 			this.ctx.drawImage(logo.image, logo.x, logo.y, logo.width, logo.height);
+		});
+
+		this.rectangles.forEach((rect) => {
+			this.ctx.fillStyle = rect.fillColor;
+			this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 		});
 	}
 
@@ -99,6 +106,10 @@ class World {
 		this.logos.push(new Logo(x, y, moveX, moveY, vel));
 	}.bind(this);
 
+	addRectangle = function (x, y, w, h, moveX, moveY, vel, fillColor) {
+		this.rectangles.push(new Rect(x, y, w, h, moveX, moveY, vel, fillColor));
+	}.bind(this);
+
 	/**
 	 * Adds a logo to the world, at its center.
 	 */
@@ -125,11 +136,18 @@ class World {
 	updatePositions() {
 		// Resolve collisions between logos and walls
 		this.logos = this.findAndResolveCollisions(this.logos, this.walls);
+		this.rectangles = this.findAndResolveCollisions(this.rectangles, this.walls);
 
-		// Draw each rectangle onto the canvas
+		// Update each logos position
 		this.logos = this.logos.map((logo) => {
 			logo.updatePos();
 			return logo;
+		});
+
+		// Update each logos position
+		this.rectangles = this.rectangles.map((rect) => {
+			rect.updatePos();
+			return rect;
 		});
 	}
 
@@ -149,6 +167,7 @@ class World {
 			const rect = sorted[i];
 
 			// Check rectangle vs. wall collisions (so things don't fly out of bounds)
+
 			walls.forEach((wall) => {
 				const test = wall.dynamicRectVsRect(rect);
 
@@ -168,14 +187,14 @@ class World {
 				const target = sorted[targetIndex];
 
 				// Test collision
-				const collisionInfo = rect.dynamicRectVsRect(target);
+				const collisionInfo =  rect.dynamicRectVsRect(target);
 
 				// Detects whether the two rectangles intersect on the X axis
 				if (collisionInfo.doesIntersect.x && collisionInfo.t < 1) {
 					if (collisionInfo.doesIntersect.y) {
 						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
-						newRects[0].updateColor();
-						newRects[1].updateColor();
+						// newRects[0].updateColor();
+						// newRects[1].updateColor();
 						sorted[i] = newRects[0];
 						sorted[targetIndex] = newRects[1];
 					}
@@ -196,7 +215,7 @@ class World {
 	 * @returns {Rect[]}
 	 */
 	resolveCollision = function (rect, target, cRay) {
-		// If moving in a non-zero direction, switch directions.
+		// Left right collision
 		if (cRay.dX !== 0) {
 			if (rect.vector.moveX < 0 !== target.vector.moveX < 0) {
 				// Opposite directions
@@ -217,6 +236,8 @@ class World {
 				// Opposite directions
 				rect.vector.moveY *= -1;
 				target.vector.moveY *= -1;
+				// BUT: We don't always want to switch!!!!
+				// If they are already overlapping and trying to move in opposite directions, then we want to let them!
 			} else {
 				// Same direction
 				if (Math.abs(rect.vector.moveY) > Math.abs(target.vector.moveY)) {
@@ -435,7 +456,7 @@ class Rect extends Point {
 
 		// If no collision, return false
 		if (tNear.x > tFar.y || tNear.y > tFar.x) {
-			// If crossing an axis (but no collision)
+			// If crossing an axis (but no collision). This is important for our sort and sweep algorithm.
 			if (tNearHit < 0) {
 				if (tNear.x > tNear.y) {
 					collisionInfo.doesIntersect.x = true;
@@ -452,7 +473,8 @@ class Rect extends Point {
 			return collisionInfo;
 		}
 
-		if (tNearHit < 0) {
+		if (tNearHit < 0 && tFarHit < 1) {
+			// If they're going in opposite directions and we're within reach of "escaping", don't collide.
 			return collisionInfo;
 		}
 
@@ -474,7 +496,6 @@ class Rect extends Point {
 			}
 		}
 
-		collisionInfo.tNearHit = tNearHit;
 		collisionInfo = {
 			doesIntersect: { x: true, y: true },
 			cRay: new Ray(contactPoint.x, contactPoint.y, contactNormal.x, contactNormal.y),
@@ -495,7 +516,10 @@ class Rect extends Point {
 			this.x - r.width / 2,
 			this.y - r.height / 2,
 			this.width + r.width,
-			this.height + r.height
+			this.height + r.height,
+			this.vector.moveX,
+			this.vector.moveY,
+			this.vel
 		);
 
 		const centerX = r.x + r.width / 2;
@@ -645,7 +669,12 @@ function getRandomVector() {
 
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
-	world.addLogoAtCenter();
+	// world.addLogo(100, 120, 0, 1, 5);
+	// world.addLogo(100, 100, 0, -1, 5);
+
+	world.addRectangle(100, 100, 10, 10, 1, 0, 5);
+	world.addRectangle(101, 130, 15, 10, 1, -.4, 5);
+	// world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
 
 	// Event listeners
