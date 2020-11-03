@@ -7,7 +7,8 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 `F5` will launch an instance of Chrome and the VS Code Debugger.
 
 ## Todo
-- Refactor
+- >>>> [ ] Would be nice to really make collision detection work :(˝
+- [ ] Refactor
     - >>> [ ] Add some nicer docs.
     - [ ] Determine highest variance axis.
     - [ ] Potentially some sort of currying method on `Point` to make working points a bit easier in places?
@@ -25,7 +26,6 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 - [x] Busted mouseout bug.
 
 ## Maybe later
-- >>>> [ ] Would be nice to really make collision detection work :(˝
 - [ ] Give an option to hit the corner every time.
 - [ ] Maybe rebuild this in Elm?
 

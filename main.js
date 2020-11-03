@@ -1,4 +1,12 @@
+/**
+ * Class representing a world, which keeps track of overall state.
+ * @class World
+ */
 class World {
+	/**
+	 * Creates a world
+	 * @param  {HTMLCanvasElement} canvasEl
+	 */
 	constructor(canvasEl) {
 		this.canvas = canvasEl;
 		this.ctx = this.canvas.getContext("2d");
@@ -15,10 +23,8 @@ class World {
 	}
 
 	/**
-	 *
-	 * Dispatcher
-	 *
-	 * */
+	 * Dispatches multiple functions, and gets called every frame.
+	 */
 	nextFrame = function () {
 		this.updatePositions();
 		this.drawCanvas();
@@ -29,6 +35,10 @@ class World {
 	 *
 	 * View methods, for drawing to the canvas
 	 *
+	 */
+
+	/**
+	 * Draws the whole world, background and logos.
 	 */
 	drawCanvas() {
 		// Clear the canvas
@@ -53,6 +63,10 @@ class World {
 	 * Model methods, for updating the World's model
 	 *
 	 */
+
+	/**
+	 * Sets the size of our world.
+	 */
 	setSize() {
 		const w = window.innerWidth;
 		const h = window.innerHeight;
@@ -73,10 +87,21 @@ class World {
 		];
 	}
 
+	/**
+	 * Adds a logo to the world.
+	 * @param  {number} x
+	 * @param  {number} y
+	 * @param  {number} moveX
+	 * @param  {number} moveY
+	 * @param  {number} vel
+	 */
 	addLogo = function (x, y, moveX, moveY, vel) {
 		this.logos.push(new Logo(x, y, moveX, moveY, vel));
 	}.bind(this);
 
+	/**
+	 * Adds a logo to the world, at its center.
+	 */
 	addLogoAtCenter = function () {
 		// Add logo
 		const dir = getRandomVector();
@@ -85,12 +110,18 @@ class World {
 		this.addLogo(centerX, centerY, dir.x, dir.y, this.speed);
 	};
 
+	/**
+	 * Adds a logo to the world, at the current mouse position.
+	 */
 	addLogoAtMousePos = function () {
 		const mouse = this.mousePos;
 		const dir = getRandomVector();
 		this.addLogo(mouse.x, mouse.y, dir.x, dir.y, this.speed);
 	}.bind(this);
 
+	/**
+	 * Resolves collisions, then updates positions of all logos
+	 */
 	updatePositions() {
 		// Resolve collisions between logos and walls
 		this.logos = this.findAndResolveCollisions(this.logos, this.walls);
@@ -199,15 +230,26 @@ class World {
 		return [rect, target];
 	};
 
+	/**
+	 * Returns mouse position relative to canvas
+	 * @param  {Event} e
+	 * @returns {Point}
+	 */
 	getMousePos(e) {
 		const rect = this.canvas;
-		return {
-			x: e.clientX - rect.clientLeft,
-			y: e.clientY - rect.clientTop
-		};
+		return new Point(e.clientX - rect.clientLeft, e.clientY - rect.clientTop);
 	}
 
-	// Event handlers
+	/**
+	 *
+	 * Event handlers
+	 *
+	 */
+
+	/**
+	 * Handles window resize event.
+	 * @param  {Event} e
+	 */
 	handleResize = function (e) {
 		const v = this.speed;
 		this.setSize();
@@ -215,7 +257,11 @@ class World {
 		this.addLogoAtCenter();
 	}.bind(this);
 
-	onSpeedChange = function (e) {
+	/**
+	 * Handles a change to world's overall speed.
+	 * @param  {Event} e
+	 */
+	handleSpeedChange = function (e) {
 		this.speed = parseInt(e.target.value);
 		this.logos = this.logos.map((logo) => {
 			logo.vel = this.speed;
@@ -223,6 +269,10 @@ class World {
 		});
 	}.bind(this);
 
+	/**
+	 * Handles a mousedown event.
+	 * @param  {Event} e
+	 */
 	handleMousedown = function (e) {
 		this.isMouseDown = true;
 		this.mousePos = this.getMousePos(e);
@@ -231,12 +281,19 @@ class World {
 		window.addEventListener("mouseMove", this.handleMousemove);
 	}.bind(this);
 
+	/**
+	 * Handles a mousemove event.
+	 * @param  {Event} e
+	 */
 	handleMousemove = function (e) {
 		if (this.isMouseDown) {
 			this.mousePos = this.getMousePos(e);
 		}
 	}.bind(this);
 
+	/**
+	 * @param  {Event} e - Handles a mouseout event.
+	 */
 	handleMouseup = function (e) {
 		this.isMouseDown = false;
 		clearInterval(this.makeItRain);
@@ -247,7 +304,7 @@ class World {
 /**
  *
  *
- * Classes
+ * Body classes
  *
  */
 
@@ -453,13 +510,19 @@ class Rect extends Point {
 		const collisionInfo = largerRect.rayVsRect(ray);
 		return collisionInfo;
 	}
-
+	
+	/**
+	 * Updates this rects x and y properties.
+	 */
 	updatePos() {
 		// Move logo along its vector
 		this.x += this.vector.moveX * this.vel;
 		this.y += this.vector.moveY * this.vel;
 	}
-
+	
+	/**
+	 * Updates this Rect's color.
+	 */
 	updateColor() {
 		const colors = ["red", "green", "blue", "yellow", "pink"];
 		this.fillColor = colors[Math.floor(Math.random() * colors.length)];
@@ -489,11 +552,17 @@ class Logo extends Rect {
 		this.imagePathIndex = Math.floor(Math.random() * this.imagePaths.length);
 		this.setSrc();
 	}
-
+	
+	/**
+	 * Sets this Logo's image src (for different colored logos)
+	 */
 	setSrc() {
 		this.image.src = this.imagePaths[this.imagePathIndex];
 	}
-
+	
+	/**
+	 * Round-robin rotation of this logos color.
+	 */
 	updateColor() {
 		if (this.imagePathIndex === this.imagePaths.length - 1) {
 			this.imagePathIndex = 0;
@@ -550,6 +619,10 @@ function sortObjectsByKey(key, objects) {
 	return sortObjectsByKey(key, left).concat([pivot]).concat(sortObjectsByKey(key, right));
 }
 
+/**
+ * Returns a random vector (in the form of a point)
+ * @returns {Point}
+ */
 function getRandomVector() {
 	const hyp = Math.sqrt(2);
 	const x = Math.random();
@@ -565,7 +638,7 @@ function getRandomVector() {
  */
 (function () {
 	// Pre-load all images
-	let imagePaths = new Logo().imagePaths
+	let imagePaths = new Logo().imagePaths;
 	imagePaths.forEach((path) => {
 		new Image().src = path;
 	});
@@ -581,5 +654,5 @@ function getRandomVector() {
 	world.canvas.addEventListener("mousemove", world.handleMousemove);
 	world.canvas.addEventListener("mouseup", world.handleMouseup);
 	world.canvas.addEventListener("mouseout", world.handleMouseup);
-	document.getElementById("dvd-screensaver-speed").addEventListener("input", world.onSpeedChange);
+	document.getElementById("dvd-screensaver-speed").addEventListener("input", world.handleSpeedChange);
 })();
