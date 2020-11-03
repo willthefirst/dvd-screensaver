@@ -473,7 +473,7 @@ class Rect extends Point {
 			return collisionInfo;
 		}
 
-		if (tNearHit < 0 && tFarHit < 1) {
+		if (tNearHit < 0) {
 			// If they're going in opposite directions and we're within reach of "escaping", don't collide.
 			return collisionInfo;
 		}
@@ -672,8 +672,8 @@ function getRandomVector() {
 	// world.addLogo(100, 120, 0, 1, 5);
 	// world.addLogo(100, 100, 0, -1, 5);
 
-	world.addRectangle(100, 100, 100, 100, 1, 0, 25, "green");
-	world.addRectangle(50, 100, 100, 100, -1, 0, 25, "blue");
+	world.addRectangle(350, 100, 100, 100,-.1, -1, 10, "blue");
+	world.addRectangle(200, 300, 100, 100, 0, -1, 11, "green");
 	
 	// world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
