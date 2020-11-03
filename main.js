@@ -173,7 +173,7 @@ class World {
 
 				if (test.doesIntersect.x && test.doesIntersect.y && test.t < 1) {
 					const rectAndWall = this.resolveCollision(rect, wall, test.cRay);
-					rectAndWall[0].updateColor();
+					// rectAndWall[0].updateColor();
 					sorted[i] = rectAndWall[0];
 				}
 			});
@@ -672,8 +672,9 @@ function getRandomVector() {
 	// world.addLogo(100, 120, 0, 1, 5);
 	// world.addLogo(100, 100, 0, -1, 5);
 
-	world.addRectangle(100, 100, 10, 10, 1, 0, 5);
-	world.addRectangle(101, 130, 15, 10, 1, -.4, 5);
+	world.addRectangle(100, 100, 100, 100, 1, 0, 25, "green");
+	world.addRectangle(50, 100, 100, 100, -1, 0, 25, "blue");
+	
 	// world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
 
