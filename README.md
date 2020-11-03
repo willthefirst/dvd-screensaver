@@ -7,10 +7,11 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 `F5` will launch an instance of Chrome and the VS Code Debugger.
 
 ## Todo
-
+- >>> [ ] More self-explanatory user interface
+- >>> Theres a mouseout bug.
 - Refactor
+    - >>> [ ] Add some nicer docs.
     - [ ] Determine highest variance axis.
-    - [ ] Add some nicer docs.
     - [ ] Potentially some sort of currying method on `Point` to make working points a bit easier in places?
     - [ ] For the `Rect` class, renam `.vector` to `.dir` and make vector a computer prop from `.dir * .vel`
     - [ ] Why does the whole program slow down over time?
@@ -24,7 +25,7 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
     - [x] Get two rectangles to bounce off of one another using sort and sweep.
 
 ## Maybe later
-- [ ] Would be nice to really make collision detection work :(˝
+- >>>> [ ] Would be nice to really make collision detection work :(˝
 - [ ] Give an option to hit the corner every time.
 - [ ] Maybe rebuild this in Elm?
 

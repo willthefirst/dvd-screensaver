@@ -9,17 +9,34 @@
         html {
             overflow: hidden;
         }
+
         body {
             margin: 0;
             overflow: hidden;
             position: relative;
+            font-family: monospace;
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        .dvd-screensaver-controls {
+            position: absolute;
+            margin: 20px;
+            color: white;
+        }
+
+        #dvd-screensaver-speed {
+            vertical-align: middle;
         }
     </style>
 </head>
 
 <body>
-    <input id="dvd-screensaver-speed" type="range" min="1" max="50" value="1"
-        style="transform: rotate(-90deg); position: absolute; top: 66px; right: -50px;">
+    <div class="dvd-screensaver-controls">
+        <label for="dvd-screensaver-speed" id="speed-label">Speed:</label>
+        <input id="dvd-screensaver-speed" type="range" min="1" max="50" value="2">
+        <div>Click around for mayhem.</div>
+    </div>
     <canvas id="dvd" width="1200" height="900">
     </canvas>
     <script src="main.js"></script>

@@ -6,7 +6,7 @@ class World {
 		this.logos = [];
 		this.height = 600;
 		this.width = 900;
-		this.speed = 1;
+		this.speed = 2;
 		this.mousePos = { x: 0, y: 0 };
 		this.cursorRay = new Ray(0, 0, 0, 0);
 		this.collisionRay = new Ray(0, 0, 0, 0);
