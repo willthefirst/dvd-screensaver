@@ -7,7 +7,6 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 `F5` will launch an instance of Chrome and the VS Code Debugger.
 
 ## Todo
-- >>> [ ] More self-explanatory user interface
 - >>> Theres a mouseout bug.
 - Refactor
     - >>> [ ] Add some nicer docs.
@@ -23,6 +22,7 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
     - [x] Get a dynamic rectangle to bounce correctly off of a static rectangle?
     - [x] Implement sort and sweep first with static rectangles.
     - [x] Get two rectangles to bounce off of one another using sort and sweep.
+- [x] More self-explanatory user interface
 
 ## Maybe later
 - >>>> [ ] Would be nice to really make collision detection work :(˝
