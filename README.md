@@ -9,7 +9,6 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 ## Todo
 - >>>> [ ] Would be nice to really make collision detection work :(˝
 - [ ] Refactor
-    - >>> [ ] Add some nicer docs.
     - [ ] Determine highest variance axis.
     - [ ] Potentially some sort of currying method on `Point` to make working points a bit easier in places?
     - [ ] For the `Rect` class, renam `.vector` to `.dir` and make vector a computer prop from `.dir * .vel`
@@ -17,6 +16,7 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
     - [x] All images load immediately
     - [x] Overflow hidden/improve on mobile
     - [x] Should we use the same code to make a dynamic rectangle bounce off of the walls? Then we could remove the offscreen bug section.
+    - [x] Add some nicer docs.
 - [x] Implement collision detection working off of [this tutorial] (https://youtu.be/8JJ-4JgR7Dg?t=2003)
     - [x] Get collision vector working perfectly with a ray coming from any angle.
     - [x] Get a dynamic rectangle to bounce correctly off of a static rectangle?
