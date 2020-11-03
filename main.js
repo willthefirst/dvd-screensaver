@@ -223,7 +223,7 @@ class World {
 				target.vector.moveX *= -1;
 			} else {
 				// Same direction
-				if (Math.abs(rect.vector.moveX) > Math.abs(target.vector.moveX)) {
+				if (Math.abs(rect.vector.moveX * rect.vel) > Math.abs(target.vector.moveX * target.vel)) {
 					rect.vector.moveX *= -1;
 				} else {
 					target.vector.moveX *= -1;
@@ -240,7 +240,7 @@ class World {
 				// If they are already overlapping and trying to move in opposite directions, then we want to let them!
 			} else {
 				// Same direction
-				if (Math.abs(rect.vector.moveY) > Math.abs(target.vector.moveY)) {
+				if (Math.abs(rect.vector.moveY * rect.vel) > Math.abs(target.vector.moveY * target.vel)) {
 					rect.vector.moveY *= -1;
 				} else {
 					target.vector.moveY *= -1;
@@ -672,8 +672,9 @@ function getRandomVector() {
 	// world.addLogo(100, 120, 0, 1, 5);
 	// world.addLogo(100, 100, 0, -1, 5);
 
-	world.addRectangle(350, 100, 100, 100,-.1, -1, 10, "blue");
+	world.addRectangle(350, 100, 100, 100, -.1, -1, 10, "blue");
 	world.addRectangle(200, 300, 100, 100, 0, -1, 11, "green");
+	world.addRectangle(300, 100, 100, 100, -.1, -1, 5, "yellow");
 	
 	// world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);

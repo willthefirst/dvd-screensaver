@@ -8,6 +8,7 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 
 ## Todo
 - > [ ] Would be nice to really make collision detection work :(˝
+    - It seems like this bug happens when velocities are different.
 - > [ ] There's a color change bug
 - [ ] Refactor
     - [ ] Determine highest variance axis.
