@@ -208,7 +208,7 @@ class World {
 	}
 
 	// Event handlers
-	onResize = function (e) {
+	handleResize = function (e) {
 		const v = this.speed;
 		this.setSize();
 		this.logos = [];
@@ -223,24 +223,24 @@ class World {
 		});
 	}.bind(this);
 
-	onMousedown = function (e) {
+	handleMousedown = function (e) {
 		this.isMouseDown = true;
 		this.mousePos = this.getMousePos(e);
 		this.addLogoAtMousePos();
 		this.makeItRain = window.setInterval(this.addLogoAtMousePos, 90);
-		window.addEventListener("mouseMove", this.onMousemove);
+		window.addEventListener("mouseMove", this.handleMousemove);
 	}.bind(this);
 
-	onMousemove = function (e) {
+	handleMousemove = function (e) {
 		if (this.isMouseDown) {
 			this.mousePos = this.getMousePos(e);
 		}
 	}.bind(this);
 
-	onMouseup = function (e) {
+	handleMouseup = function (e) {
 		this.isMouseDown = false;
 		clearInterval(this.makeItRain);
-		window.removeEventListener("mousemove", this.onMousemove);
+		window.removeEventListener("mousemove", this.handleMousemove);
 	}.bind(this);
 }
 
@@ -576,9 +576,10 @@ function getRandomVector() {
 	window.requestAnimationFrame(world.nextFrame);
 
 	// Event listeners
-	window.addEventListener("resize", world.onResize);
-	world.canvas.addEventListener("mousedown", world.onMousedown);
-	world.canvas.addEventListener("mousemove", world.onMousemove);
-	world.canvas.addEventListener("mouseup", world.onMouseup);
+	window.addEventListener("resize", world.handleResize);
+	world.canvas.addEventListener("mousedown", world.handleMousedown);
+	world.canvas.addEventListener("mousemove", world.handleMousemove);
+	world.canvas.addEventListener("mouseup", world.handleMouseup);
+	world.canvas.addEventListener("mouseout", world.handleMouseup);
 	document.getElementById("dvd-screensaver-speed").addEventListener("input", world.onSpeedChange);
 })();
