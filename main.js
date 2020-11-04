@@ -672,7 +672,12 @@ function getRandomVector() {
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
 
-	world.addLogoAtCenter();
+	
+	world.addRectangle(400, 100, 100, 100, 	0, 1, 5, "blue");
+	world.addRectangle(400, 500, 100, 100,  0, 1, 5, "green");
+	world.addRectangle(100, 500, 100, 100, 1, 1, 5, "red");
+	
+	// world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
 
 	// Event listeners
