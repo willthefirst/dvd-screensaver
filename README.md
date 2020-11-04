@@ -7,11 +7,7 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 `F5` will launch an instance of Chrome and the VS Code Debugger.
 
 ## Todo
-- > [ ] Would be nice to really make collision detection work :(˝
-    - It seems like this bug happens when velocities are different.
-        - ~~Things to try: recreate this bug more directly?~~
-        - Try drawing the ray to see what it's doing?
-- > [ ] There's a color change bug
+- [ ] The sort 'n' sweep algorithm still ain't totally right.
 - [ ] Refactor
     - [ ] Determine highest variance axis.
     - [ ] Potentially some sort of currying method on `Point` to make working points a bit easier in places?

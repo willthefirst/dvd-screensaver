@@ -173,7 +173,7 @@ class World {
 
 				if (test.doesIntersect.x && test.doesIntersect.y && test.t < 1) {
 					const rectAndWall = this.resolveCollision(rect, wall, test.cRay);
-					// rectAndWall[0].updateColor();
+					rectAndWall[0].updateColor();
 					sorted[i] = rectAndWall[0];
 				}
 			});
@@ -193,8 +193,8 @@ class World {
 				if (collisionInfo.doesIntersect.x) {  
 					if (collisionInfo.doesIntersect.y && collisionInfo.t < 1) {
 						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
-						// newRects[0].updateColor();
-						// newRects[1].updateColor();
+						newRects[0].updateColor();
+						newRects[1].updateColor();
 						sorted[i] = newRects[0];
 						sorted[targetIndex] = newRects[1];
 					}
@@ -457,9 +457,10 @@ class Rect extends Point {
 		// TODO NEXT UP: the bug is here. this should be firing when the green and yellow mess up, and it doesn't
 		// If the ray does not collide (at any point in time, pos or neg) with the rect
 		if (tNear.x > tFar.y || tNear.y > tFar.x) {
+			const closestHit = Math.min(tNear.x, tNear.y)
 			// If crossing an axis (but no collision). This is important for our sort and sweep algorithm.
-			if (tNearHit < 0) {
-				if (tNear.x > tNear.y) {
+			if (closestHit < 1) {
+				if (tNear.x < tNear.y) {
 					collisionInfo.doesIntersect.x = true;
 				} else {
 					collisionInfo.doesIntersect.y = true;
@@ -468,7 +469,6 @@ class Rect extends Point {
 			return collisionInfo;
 		}
 
-		// Ray must be intersecting rectangle
 		const tFarHit = Math.min(tFar.x, tFar.y);
 
 		if (tFarHit < 0) {
@@ -671,13 +671,8 @@ function getRandomVector() {
 
 	const world = new World(document.getElementById("dvd"));
 	world.setSize();
-
 	
-	world.addRectangle(400, 100, 100, 100, 	0, 1, 5, "blue");
-	world.addRectangle(400, 500, 100, 100,  0, 1, 5, "green");
-	world.addRectangle(100, 500, 100, 100, 1, 1, 5, "red");
-	
-	// world.addLogoAtCenter();
+	world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
 
 	// Event listeners
