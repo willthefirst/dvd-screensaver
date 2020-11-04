@@ -678,8 +678,8 @@ function getRandomVector() {
 	// world.addRectangle(300, 100, 100, 100, -.1, -1, 5, "yellow");
 	
 	
-	world.addRectangle(223, 670, 100, 100, -.1, 1, 5, "yellow");
-	world.addRectangle(200, 894, 100, 100, 0, -1, 11, "green");
+	world.addRectangle(100, 100, 100, 100, .2, 1, 3, "yellow");
+	world.addRectangle(230, 500, 100, 100, -.2, -1, 3, "green");
 
 	// world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
