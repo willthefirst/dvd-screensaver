@@ -454,6 +454,7 @@ class Rect extends Point {
 
 		const tNearHit = Math.max(tNear.x, tNear.y);
 
+		// TODO NEXT UP: the bug is here. this should be firing when the green and yellow mess up, and it doesn't
 		// If no collision, return false
 		if (tNear.x > tFar.y || tNear.y > tFar.x) {
 			// If crossing an axis (but no collision). This is important for our sort and sweep algorithm.
@@ -672,10 +673,14 @@ function getRandomVector() {
 	// world.addLogo(100, 120, 0, 1, 5);
 	// world.addLogo(100, 100, 0, -1, 5);
 
-	world.addRectangle(350, 100, 100, 100, -.1, -1, 10, "blue");
-	world.addRectangle(200, 300, 100, 100, 0, -1, 11, "green");
-	world.addRectangle(300, 100, 100, 100, -.1, -1, 5, "yellow");
+	// world.addRectangle(350, 100, 100, 100, -.1, -1, 10, "blue");
+	// world.addRectangle(200, 300, 100, 100, 0, -1, 11, "green");
+	// world.addRectangle(300, 100, 100, 100, -.1, -1, 5, "yellow");
 	
+	
+	world.addRectangle(223, 670, 100, 100, -.1, 1, 5, "yellow");
+	world.addRectangle(200, 894, 100, 100, 0, -1, 11, "green");
+
 	// world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
 
