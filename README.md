@@ -7,9 +7,9 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 
 ## Development
 
-`F5` will launch an instance of Chrome and the VS Code Debugger.
+It's just a static website. If you are using VSCode Debugger for Chrome, `F5` will launch the project in Chrome.
 
-Deployment: `surge` in the command line.
+To deploy, type `surge` in the command line.
 
 ## Todo
 - [ ] The sort 'n' sweep algorithm still ain't totally right.
