@@ -1,12 +1,15 @@
 # DVD Screensaver
 
 The live website: https://dvd-screensaver.surge.sh
+Docs: https://dvd-screensaver.surge.sh/docs
 
-Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) we all know and love.  
+Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) we all know and love.
 
 ## Development
 
 `F5` will launch an instance of Chrome and the VS Code Debugger.
+
+Deployment: `surge` in the command line.
 
 ## Todo
 - [ ] The sort 'n' sweep algorithm still ain't totally right.
@@ -32,4 +35,4 @@ Inspired by the [DVD screensaver](https://www.youtube.com/watch?v=-pdVUsCqd2U) w
 - [ ] Maybe rebuild this in Elm?
 
 Big thanks to [@adeshar00](https://github.com/adeshar00) for helping me think through collision detection.  
-Built during my time at [Recurse Center](https://www.recurse.com)
+Built during my time at [Recurse Center](https://www.recurse.com).

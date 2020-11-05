@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: main.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: main.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * Class representing a world, which keeps track of overall state.
  * @class World
  */
@@ -163,7 +191,7 @@ class World {
 		const sorted = sortObjectsByKey("x", rects);
 
 		// Iterate through each object and check for collisions
-		for (let i = 0; i < sorted.length; i++) {
+		for (let i = 0; i &lt; sorted.length; i++) {
 			const rect = sorted[i];
 
 			// Check rectangle vs. wall collisions (so things don't fly out of bounds)
@@ -171,7 +199,7 @@ class World {
 			walls.forEach((wall) => {
 				const test = wall.dynamicRectVsRect(rect);
 
-				if (test.doesIntersect.x && test.doesIntersect.y && test.t < 1) {
+				if (test.doesIntersect.x &amp;&amp; test.doesIntersect.y &amp;&amp; test.t &lt; 1) {
 					const rectAndWall = this.resolveCollision(rect, wall, test.cRay);
 					rectAndWall[0].updateColor();
 					sorted[i] = rectAndWall[0];
@@ -183,7 +211,7 @@ class World {
 			let testNextTarget = true;
 			let targetIndex = i + 1;
 
-			while (testNextTarget && targetIndex < sorted.length) {
+			while (testNextTarget &amp;&amp; targetIndex &lt; sorted.length) {
 				const target = sorted[targetIndex];
 
 				// Test collision
@@ -191,7 +219,7 @@ class World {
 
 				// Detects whether the two rectangles intersect on the X axis
 				if (collisionInfo.doesIntersect.x) {  
-					if (collisionInfo.doesIntersect.y && collisionInfo.t < 1) {
+					if (collisionInfo.doesIntersect.y &amp;&amp; collisionInfo.t &lt; 1) {
 						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
 						newRects[0].updateColor();
 						newRects[1].updateColor();
@@ -217,7 +245,7 @@ class World {
 	resolveCollision = function (rect, target, cRay) {
 		// Left right collision
 		if (cRay.dX !== 0) {
-			if (rect.vector.moveX < 0 !== target.vector.moveX < 0) {
+			if (rect.vector.moveX &lt; 0 !== target.vector.moveX &lt; 0) {
 				// Opposite directions
 				rect.vector.moveX *= -1;
 				target.vector.moveX *= -1;
@@ -232,7 +260,7 @@ class World {
 		}
 		// Up/down collision
 		if (cRay.dY !== 0) {
-			if (rect.vector.moveY < 0 !== target.vector.moveY < 0) {
+			if (rect.vector.moveY &lt; 0 !== target.vector.moveY &lt; 0) {
 				// Opposite directions
 				rect.vector.moveY *= -1;
 				target.vector.moveY *= -1;
@@ -396,9 +424,9 @@ class Rect extends Point {
 	 * @returns {boolean}
 	 */
 	pointVsRect(p) {
-		const isInsideX = p.x >= this.x && p.x <= this.x + this.width;
-		const isInsideY = p.y >= this.y && p.y <= this.y + this.height;
-		return isInsideX && isInsideY;
+		const isInsideX = p.x >= this.x &amp;&amp; p.x &lt;= this.x + this.width;
+		const isInsideY = p.y >= this.y &amp;&amp; p.y &lt;= this.y + this.height;
+		return isInsideX &amp;&amp; isInsideY;
 	}
 
 	/**
@@ -407,9 +435,9 @@ class Rect extends Point {
 	 * @returns {boolean}
 	 */
 	rectVsRect(r) {
-		const isInsideX = this.x <= r.x + r.width && this.x + this.width >= r.x;
-		const isInsideY = this.y <= r.y + r.height && this.y + this.height >= r.y;
-		return isInsideX && isInsideY;
+		const isInsideX = this.x &lt;= r.x + r.width &amp;&amp; this.x + this.width >= r.x;
+		const isInsideY = this.y &lt;= r.y + r.height &amp;&amp; this.y + this.height >= r.y;
+		return isInsideX &amp;&amp; isInsideY;
 	}
 
 	/**
@@ -459,8 +487,8 @@ class Rect extends Point {
 		if (tNear.x > tFar.y || tNear.y > tFar.x) {
 			const closestHit = Math.min(tNear.x, tNear.y)
 			// If crossing an axis (but no collision). This is important for our sort and sweep algorithm.
-			if (closestHit < 1) {
-				if (tNear.x < tNear.y) {
+			if (closestHit &lt; 1) {
+				if (tNear.x &lt; tNear.y) {
 					collisionInfo.doesIntersect.x = true;
 				} else {
 					collisionInfo.doesIntersect.y = true;
@@ -471,11 +499,11 @@ class Rect extends Point {
 
 		const tFarHit = Math.min(tFar.x, tFar.y);
 
-		if (tFarHit < 0) {
+		if (tFarHit &lt; 0) {
 			return collisionInfo;
 		}
 
-		if (tNearHit < 0) {
+		if (tNearHit &lt; 0) {
 			// If they're going in opposite directions and we're within reach of "escaping", don't collide.
 			return collisionInfo;
 		}
@@ -485,13 +513,13 @@ class Rect extends Point {
 		let contactNormal;
 
 		if (tNear.x > tNear.y) {
-			if (r.dX < 0) {
+			if (r.dX &lt; 0) {
 				contactNormal = { x: 1, y: 0 };
 			} else {
 				contactNormal = { x: -1, y: 0 };
 			}
 		} else {
-			if (r.dY < 0) {
+			if (r.dY &lt; 0) {
 				contactNormal = { x: 0, y: 1 };
 			} else {
 				contactNormal = { x: 0, y: -1 };
@@ -622,7 +650,7 @@ function posOrNeg(n) {
  */
 function sortObjectsByKey(key, objects) {
 	// Base case
-	if (objects.length <= 1) {
+	if (objects.length &lt;= 1) {
 		return objects;
 	}
 
@@ -632,7 +660,7 @@ function sortObjectsByKey(key, objects) {
 		right = [];
 
 	// Check all elements after the pivot.
-	for (let i = 1; i < objects.length; i++) {
+	for (let i = 1; i &lt; objects.length; i++) {
 		const object = objects[i];
 
 		if (object[key] >= pivot[key]) {
@@ -683,3 +711,26 @@ function getRandomVector() {
 	world.canvas.addEventListener("mouseout", world.handleMouseup);
 	document.getElementById("dvd-screensaver-speed").addEventListener("input", world.handleSpeedChange);
 })();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Logo.html">Logo</a></li><li><a href="Point.html">Point</a></li><li><a href="Ray.html">Ray</a></li><li><a href="Rect.html">Rect</a></li><li><a href="World.html">World</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getRandomVector">getRandomVector</a></li><li><a href="global.html#posOrNeg">posOrNeg</a></li><li><a href="global.html#sortObjectsByKey">sortObjectsByKey</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Nov 05 2020 09:55:09 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
