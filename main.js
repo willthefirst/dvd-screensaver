@@ -9,7 +9,7 @@ class World {
 	 */
 	constructor(canvasEl) {
 		this.canvas = canvasEl;
-		this.ctx = this.canvas.getContext("2d");
+		this.ctx = this.canvas.getContext('2d');
 		this.walls = [];
 		this.logos = [];
 		this.rectangles = [];
@@ -58,8 +58,8 @@ class World {
 	}
 
 	drawBackground() {
-		this.ctx.fillStyle = "#000";
-		this.ctx.strokeStyle = "rgba(0, 153, 255, 0.4)";
+		this.ctx.fillStyle = '#000';
+		this.ctx.strokeStyle = 'rgba(0, 153, 255, 0.4)';
 		this.ctx.fillRect(0, 0, this.width, this.height);
 		this.ctx.save();
 	}
@@ -81,8 +81,8 @@ class World {
 		// Set up dimensions
 		this.width = w;
 		this.height = h;
-		this.canvas.setAttribute("width", `${w}px`);
-		this.canvas.setAttribute("height", `${h}px`);
+		this.canvas.setAttribute('width', `${w}px`);
+		this.canvas.setAttribute('height', `${h}px`);
 
 		// Add boundaries to the four sides of the window
 		const pad = 200;
@@ -160,7 +160,7 @@ class World {
 	findAndResolveCollisions(rects, walls) {
 		// TODO find the highest variance axis (then you can sort on that)
 		//  Sort rects along the X-axis
-		const sorted = sortObjectsByKey("x", rects);
+		const sorted = sortObjectsByKey('x', rects);
 
 		// Iterate through each object and check for collisions
 		for (let i = 0; i < sorted.length; i++) {
@@ -190,7 +190,7 @@ class World {
 				const collisionInfo = rect.dynamicRectVsRect(target);
 
 				// Detects whether the two rectangles intersect on the X axis
-				if (collisionInfo.doesIntersect.x) {  
+				if (collisionInfo.doesIntersect.x) {
 					if (collisionInfo.doesIntersect.y && collisionInfo.t < 1) {
 						let newRects = this.resolveCollision(rect, target, collisionInfo.cRay);
 						newRects[0].updateColor();
@@ -299,7 +299,7 @@ class World {
 		this.mousePos = this.getMousePos(e);
 		this.addLogoAtMousePos();
 		this.makeItRain = window.setInterval(this.addLogoAtMousePos, 90);
-		window.addEventListener("mouseMove", this.handleMousemove);
+		window.addEventListener('mouseMove', this.handleMousemove);
 	}.bind(this);
 
 	/**
@@ -318,7 +318,7 @@ class World {
 	handleMouseup = function (e) {
 		this.isMouseDown = false;
 		clearInterval(this.makeItRain);
-		window.removeEventListener("mousemove", this.handleMousemove);
+		window.removeEventListener('mousemove', this.handleMousemove);
 	}.bind(this);
 }
 
@@ -378,7 +378,7 @@ class Rect extends Point {
 	 * @param  {number} moveY
 	 * @param {string} fillColor
 	 */
-	constructor(xCoor, yCoor, width, height, moveX = 0, moveY = 0, vel = 1, fillColor = "#fff") {
+	constructor(xCoor, yCoor, width, height, moveX = 0, moveY = 0, vel = 1, fillColor = '#fff') {
 		super(xCoor, yCoor);
 		this.width = width;
 		this.height = height;
@@ -451,13 +451,13 @@ class Rect extends Point {
 			tNear.y = tFar.y;
 			tFar.y = tNearY_;
 		}
-		
+
 		const tNearHit = Math.max(tNear.x, tNear.y);
-		
+
 		// TODO NEXT UP: the bug is here. this should be firing when the green and yellow mess up, and it doesn't
 		// If the ray does not collide (at any point in time, pos or neg) with the rect
 		if (tNear.x > tFar.y || tNear.y > tFar.x) {
-			const closestHit = Math.min(tNear.x, tNear.y)
+			const closestHit = Math.min(tNear.x, tNear.y);
 			// If crossing an axis (but no collision). This is important for our sort and sweep algorithm.
 			if (closestHit < 1) {
 				if (tNear.x < tNear.y) {
@@ -550,7 +550,7 @@ class Rect extends Point {
 	 * Updates this Rect's color.
 	 */
 	updateColor() {
-		const colors = ["red", "green", "blue", "yellow", "pink"];
+		const colors = ['red', 'green', 'blue', 'yellow', 'pink'];
 		this.fillColor = colors[Math.floor(Math.random() * colors.length)];
 	}
 }
@@ -570,10 +570,10 @@ class Logo extends Rect {
 		super(xCoor, yCoor, 110, 75, moveX, moveY, vel);
 		this.image = new Image();
 		this.imagePaths = [
-			"images/dvd-logo-white.svg",
-			"images/dvd-logo-pink.svg",
-			"images/dvd-logo-yellow.svg",
-			"images/dvd-logo-blue.svg"
+			'images/dvd-logo-white.svg',
+			'images/dvd-logo-pink.svg',
+			'images/dvd-logo-yellow.svg',
+			'images/dvd-logo-blue.svg'
 		];
 		this.imagePathIndex = Math.floor(Math.random() * this.imagePaths.length);
 		this.setSrc();
@@ -669,17 +669,17 @@ function getRandomVector() {
 		new Image().src = path;
 	});
 
-	const world = new World(document.getElementById("dvd"));
+	const world = new World(document.getElementById('dvd'));
 	world.setSize();
-	
+
 	world.addLogoAtCenter();
 	window.requestAnimationFrame(world.nextFrame);
 
 	// Event listeners
-	window.addEventListener("resize", world.handleResize);
-	world.canvas.addEventListener("mousedown", world.handleMousedown);
-	world.canvas.addEventListener("mousemove", world.handleMousemove);
-	world.canvas.addEventListener("mouseup", world.handleMouseup);
-	world.canvas.addEventListener("mouseout", world.handleMouseup);
-	document.getElementById("dvd-screensaver-speed").addEventListener("input", world.handleSpeedChange);
+	window.addEventListener('resize', world.handleResize);
+	world.canvas.addEventListener('mousedown', world.handleMousedown);
+	world.canvas.addEventListener('mousemove', world.handleMousemove);
+	world.canvas.addEventListener('mouseup', world.handleMouseup);
+	world.canvas.addEventListener('mouseout', world.handleMouseup);
+	document.getElementById('dvd-screensaver-speed').addEventListener('input', world.handleSpeedChange);
 })();
